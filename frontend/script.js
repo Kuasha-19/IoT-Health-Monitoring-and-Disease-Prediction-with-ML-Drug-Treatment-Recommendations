@@ -1,5 +1,27 @@
+/**
+ * HealthBridge | Master Navigation Script
+ * Dynamically handles relative paths for multi-level directories.
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
-    // Definitive list of 30 medical conditions for the Mega Menu
+    // 1. Determine Folder Depth and set Base Path
+    const path = window.location.pathname;
+    let baseRelPath = "";
+
+    // Check if we are in a sub-sub-folder (like pages/services/ or pages/diseases/)
+    if (path.includes("/services/") || path.includes("/diseases/")) {
+        baseRelPath = "../../";
+    } 
+    // Check if we are in a sub-folder (like pages/)
+    else if (path.includes("/pages/")) {
+        baseRelPath = "../";
+    }
+    // We are at the root (index.html)
+    else {
+        baseRelPath = "";
+    }
+
+    // 2. Dynamic Disease Mega-Menu Generation
     const diseases = [
         "Asthma", "Alzheimer Disease", "Anemia", "Arthritis", "Bronchitis",
         "Cancer", "COVID-19", "Cholera", "Chronic Kidney Disease", "Dengue",
@@ -14,39 +36,31 @@ document.addEventListener("DOMContentLoaded", () => {
     if (grid) {
         diseases.forEach(disease => {
             const link = document.createElement('a');
-            
-            // 1. Standardize the name for the filename
-            // Replaces spaces and special characters with dashes
-            // Example: "Alzheimer's Disease" -> "alzheimer-s-disease"
+            // Format name for file matching (e.g., "Heart Attack" -> "heart-attack")
             const urlSafeName = disease.toLowerCase()
-                .replace(/'/g, '-')     // Handle apostrophes
-                .replace(/\s+/g, '-');  // Handle spaces
+                .replace(/'/g, '-')
+                .replace(/\s+/g, '-');
             
-            // 2. Set the correct path to the subfolder
-            // This matches the structure: Root > pages > diseases > cancer.html
-            link.href = `pages/diseases/${urlSafeName}.html`;
-            
-            // 3. Set the visible text
+            // Build the dynamic path based on folder depth
+            link.href = `${baseRelPath}pages/diseases/${urlSafeName}.html`;
             link.textContent = disease;
-            
-            // 4. Append to the mega menu grid
             grid.appendChild(link);
         });
     }
 });
 
 /**
- * Handles navigation redirection for Auth modules
- * @param {string} mode - signin or signup
+ * Global Navigation Helper for Auth Mode
  */
 function handleAuth(mode) {
-    window.location.href = `auth.html?mode=${mode}`;
-}
-
-/**
- * Global navigation handler for specific pages
- * @param {string} page - destination filename
- */
-function navigateTo(page) {
-    window.location.href = `${page}.html`;
+    const path = window.location.pathname;
+    let authPath = 'auth.html';
+    
+    if (path.includes("/services/") || path.includes("/diseases/")) {
+        authPath = '../../auth.html';
+    } else if (path.includes("/pages/")) {
+        authPath = '../auth.html';
+    }
+    
+    window.location.href = `${authPath}?mode=${mode}`;
 }

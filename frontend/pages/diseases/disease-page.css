@@ -1,18 +1,55 @@
+/**
+ * HealthBridge | Disease Page Specific Styles
+ * Theme: Midnight Blue with Steel Blue Background Contrast
+ */
+
+:root {
+  /* Deep colors for structural elements */
+  --midnight: #0f0e47; /* Used for Navbar & Footer */
+  --navy-deep: #12124d; /* Used for Cards/Blocks */
+
+  /* Clearly lighter color for the page body */
+  --light-blue-bg: #46468a;
+
+  /* Accent colors */
+  --steel: #505081;
+  --lavender: #8686ac;
+  --white: #ffffff;
+
+  --transition: all 0.3s ease-in-out;
+}
+
+/* --- Base Page Setup --- */
+body {
+  background-color: var(--light-blue-bg); /* Distinctly lighter than navbar */
+  color: var(--white);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* Force Navbar to Deep Midnight to ensure differentiation */
+.navbar {
+  background: var(--midnight) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .disease-container {
   max-width: 1100px;
   margin: 40px auto;
-  padding: 0 20px;
+  padding: 0 5%;
 }
 
-/* Slider Design */
+/* --- Image Slider Design --- */
 .image-slider {
   width: 100%;
-  height: 450px;
+  height: 500px;
   position: relative;
   overflow: hidden;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  margin-bottom: 40px;
+  border-radius: 4px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  margin-bottom: 60px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .slide {
@@ -21,65 +58,123 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 1s ease-in-out;
+  transition: opacity 1.2s ease-in-out;
 }
 
 .slide.active {
-  opacity: 1;
+  opacity: 0.9;
 }
 
-/* Content Styling */
+/* --- Medical Content Typography --- */
+.hero-label {
+  color: var(--lavender);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
 .medical-content h1 {
-  font-size: 2.5rem;
-  color: var(--secondary);
-  margin-bottom: 25px;
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 40px;
+  line-height: 1.1;
+  letter-spacing: -1px;
 }
 
 .info-block {
-  margin-bottom: 30px;
+  margin-bottom: 50px;
 }
 
 .info-block h2 {
-  font-size: 1.4rem;
-  color: var(--primary);
-  margin-bottom: 10px;
+  font-size: 1.7rem;
+  color: #b8b8e0; /* Softened lavender for subheaders */
+  margin-bottom: 20px;
+  font-weight: 700;
 }
 
-.info-block p,
-.info-block li {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--text-main);
+.info-block p {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  opacity: 0.95;
 }
 
-.info-block ul {
-  padding-left: 20px;
-  margin-top: 10px;
+/* --- List Styling (Dark Contrast Blocks) --- */
+.type-list {
+  list-style: none;
+  margin-top: 30px;
 }
 
-/* Features Grid */
+.type-list li {
+  background: var(--navy-deep); /* Darker than background to pop */
+  margin-bottom: 15px;
+  padding: 25px;
+  border-radius: 4px;
+  border-left: 5px solid var(--lavender);
+  transition: var(--transition);
+}
+
+.type-list li:hover {
+  transform: translateX(10px);
+  background: var(--midnight);
+}
+
+.type-list li strong {
+  color: var(--white);
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.2rem;
+}
+
+/* --- Feature Grid Cards --- */
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  margin-top: 60px;
 }
 
 .feature-card {
-  background: white;
-  padding: 25px;
-  border-radius: 8px;
-  border-left: 5px solid var(--primary);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  background: var(--navy-deep);
+  padding: 40px;
+  border-radius: 4px;
+  transition: var(--transition);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.feature-card:hover {
+  background: var(--midnight);
+  transform: translateY(-10px);
+  border-color: var(--lavender);
 }
 
 .feature-card h3 {
-  font-size: 1.1rem;
-  color: var(--secondary);
-  margin-bottom: 10px;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+  color: var(--white);
 }
 
 .feature-card p {
   font-size: 0.95rem;
-  color: var(--text-light);
+  color: var(--lavender);
+  line-height: 1.6;
+}
+
+/* --- Footer Alignment --- */
+.footer {
+  background: var(--midnight) !important;
+  margin-top: 100px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+  .medical-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .image-slider {
+    height: 350px;
+  }
 }

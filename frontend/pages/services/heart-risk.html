@@ -11,59 +11,98 @@
     <link rel="stylesheet" href="../../style.css" />
     <link rel="stylesheet" href="../../service-style.css" />
   </head>
-  <body>
+  <body class="heart-bg">
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../../index.html'">
-        <span>HealthBridge</span>
+        Health<span>Bridge</span>
       </div>
+
       <ul class="nav-links">
-        <li class="nav-item"><a href="../../index.html">Home</a></li>
+        <li class="nav-item mega-dropdown">
+          <a href="#">Disease</a>
+          <div class="mega-menu">
+            <div class="mega-menu-content">
+              <h3 class="menu-title">Medical Conditions and Diseases</h3>
+              <div class="mega-menu-grid" id="diseaseGrid"></div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#">Services</a>
+          <div class="dropdown">
+            <a href="heart-risk.html">Heart Risk</a>
+            <a href="fever.html">Fever Respiratory</a>
+            <a href="hypertension.html">Hypertension</a>
+            <a href="hypotension.html">Hypotension</a>
+            <a href="normal.html">General Checkup</a>
+          </div>
+        </li>
+
+        <li class="nav-item"><a href="../wellness.html">Wellness</a></li>
+        <li class="nav-item"><a href="../primary-drugs.html">Drugs</a></li>
         <li class="nav-item"><a href="../foods.html">Foods</a></li>
         <li class="nav-item"><a href="../contact.html">Contact</a></li>
       </ul>
     </nav>
 
+    <header class="service-hero heart-hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="category-tag">Cardiology Department</span>
+        <h1>Heart Risk <span>Prediction.</span></h1>
+        <p>
+          Comprehensive analysis of cardiovascular health markers using
+          computational intelligence.
+        </p>
+      </div>
+    </header>
+
     <main class="service-main">
       <div class="service-container">
-        <header class="service-header">
-          <div class="service-tag">Cardiology Department</div>
-          <h1>Heart Risk Prediction</h1>
-          <p>
-            Comprehensive analysis of cardiovascular health markers using
-            computational intelligence.
-          </p>
-        </header>
-
         <div class="service-gallery">
           <div class="image-box">
             <img src="1.jpg" alt="Heart Monitoring" />
+            <div class="img-label">Vascular Monitoring</div>
           </div>
           <div class="image-box">
             <img src="2.jpg" alt="Diagnostic Scan" />
+            <div class="img-label">Myocardial Analysis</div>
           </div>
           <div class="image-box">
             <img src="3.jpg" alt="Clinical Environment" />
+            <div class="img-label">ECG Diagnostics</div>
           </div>
         </div>
 
+        [Image of the human heart showing coronary arteries and internal
+        chambers]
+
         <div class="service-content-grid">
-          <div class="assessment-card">
+          <section class="assessment-card">
             <h2 class="card-title">Diagnostic Scope</h2>
             <p class="medical-description">
               The Cardiovascular Risk Assessment service focuses on the early
               detection of anomalies within the heart and circulatory system. By
               analyzing physiological data—including systolic/diastolic blood
               pressure and resting heart rate—the system calculates the
-              statistical probability of myocardial stress and other coronary
-              conditions.
+              statistical probability of myocardial stress.
             </p>
 
-            <ul class="metrics-list">
-              <li>Ventricular Output Monitoring</li>
-              <li>Arterial Pressure Deviation Analysis</li>
-              <li>Ischemic Pattern Recognition</li>
-              <li>Heart Rate Variability Assessment</li>
-            </ul>
+            <div class="metrics-container">
+              <div class="metric-item">
+                <strong>Ventricular Output</strong>
+                <span>Real-time Monitoring</span>
+              </div>
+              <div class="metric-item">
+                <strong>Arterial Pressure</strong>
+                <span>Deviation Analysis</span>
+              </div>
+              <div class="metric-item">
+                <strong>Ischemic Pattern</strong>
+                <span>Recognition Logic</span>
+              </div>
+            </div>
 
             <button
               class="btn-start-test"
@@ -71,21 +110,24 @@
             >
               Proceed to AI Prediction
             </button>
-          </div>
+          </section>
 
           <aside class="info-sidebar">
             <div class="warning-widget">
               <h3>Medical Alert</h3>
               <p>
-                If you are currently experiencing acute chest pain, shortness of
-                breath, or pain radiating to the left arm, seek immediate
-                emergency medical intervention.
+                If you are currently experiencing acute chest pain or pain
+                radiating to the left arm, seek
+                <strong>immediate emergency medical intervention</strong>.
               </p>
             </div>
 
-            <div class="status-widget">
-              <h3>Service Availability</h3>
-              <p>Status: Online</p>
+            <div class="sidebar-info-card">
+              <h4>Service Availability</h4>
+              <p>
+                Status:
+                <span style="color: #10b981; font-weight: 800">Online</span>
+              </p>
               <p>Algorithm: Neural Network v3.0</p>
             </div>
           </aside>
@@ -93,11 +135,31 @@
       </div>
     </main>
 
-    <footer class="service-footer">
-      <div class="footer-content">
-        <p>HealthBridge Clinical Diagnostics Division</p>
-        <p>Institutional Access Only - All Data Encrypted</p>
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-section brand">
+          <h2>Health<span>Bridge</span></h2>
+          <p>
+            Utilizing advanced analytics to provide proactive cardiovascular
+            insights.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="../wellness.html">Wellness Hub</a></li>
+            <li><a href="../primary-drugs.html">Drug Directory</a></li>
+            <li><a href="../contact.html">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; 2026 HealthBridge Clinical Diagnostics. All rights reserved.
+        </p>
       </div>
     </footer>
+
+    <script src="../../script.js"></script>
   </body>
 </html>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Medical Analysis | Oncology - Cancer</title>
+    <title>HealthBridge | Oncology - Cancer Analysis</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet"
@@ -14,14 +14,37 @@
   <body>
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../../index.html'">
-        <span>HealthBridge</span>
+        Health<span>Bridge</span>
       </div>
+
       <ul class="nav-links">
-        <li class="nav-item"><a href="../../index.html">Home</a></li>
+        <li class="nav-item mega-dropdown">
+          <a href="#">Disease</a>
+          <div class="mega-menu">
+            <div class="mega-menu-content">
+              <h3 class="menu-title">Medical Conditions and Diseases</h3>
+              <div class="mega-menu-grid" id="diseaseGrid"></div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#">Services</a>
+          <div class="dropdown">
+            <a href="../services/heart-risk.html">Heart Risk</a>
+            <a href="../services/fever.html">Fever Respiratory</a>
+            <a href="../services/hypertension.html">Hypertension</a>
+            <a href="../services/hypotension.html">Hypotension</a>
+            <a href="../services/normal.html">General Checkup</a>
+          </div>
+        </li>
+
         <li class="nav-item"><a href="../wellness.html">Wellness</a></li>
         <li class="nav-item">
           <a href="../primary-drugs.html">Primary Drugs</a>
         </li>
+        <li class="nav-item"><a href="../foods.html">Foods</a></li>
+        <li class="nav-item"><a href="../contact.html">Contact</a></li>
       </ul>
     </nav>
 
@@ -32,102 +55,74 @@
           <img src="2.jpg" class="slide" alt="Oncology Research" />
           <img src="3.jpg" class="slide" alt="Medical Imaging" />
           <img src="4.jpg" class="slide" alt="Laboratory Testing" />
-          <img src="5.jpg" class="slide" alt="Laboratory Testing" />
-          <img src="6.jpg" class="slide" alt="Laboratory Testing" />
         </div>
       </div>
 
       <section class="medical-content">
-        <h1>Oncology: Pathophysiology of Cancer</h1>
+        <div class="hero-label">Advanced Clinical Report</div>
+        <h1>Oncology: Pathophysiology & Molecular Therapeutics</h1>
 
         <div class="info-block">
-          <h2>Definition and Pathophysiology</h2>
+          <h2>Biological Overview</h2>
           <p>
-            Cancer is a large group of diseases characterized by the
-            uncontrolled proliferation of abnormal cells that extend beyond
-            their usual boundaries. This process, known as neoplasia, involves
-            the loss of normal cell cycle regulation, primarily driven by
-            mutations in proto-oncogenes and tumor suppressor genes. These
-            cellular aberrations allow cells to evade programmed cell death
-            (apoptosis) and initiate angiogenesis to sustain rapid growth.
+            Cancer is defined by the uncontrolled growth of abnormal cells.
+            While normal cells follow a strict cycle of growth, division, and
+            death, cancer cells evade these signals. This survival is often due
+            to mutations in the cell's DNA, specifically within proto-oncogenes
+            which promote growth.
           </p>
         </div>
 
         <div class="info-block">
-          <h2>Etiology and Causative Factors</h2>
+          <h2>Tumor Microenvironment and Angiogenesis</h2>
           <p>
-            The etiology of carcinogenesis is multifactorial, involving an
-            interaction between genetic susceptibility and external agents.
-            These include physical carcinogens (ultraviolet and ionizing
-            radiation), chemical carcinogens (asbestos, tobacco smoke
-            components, aflatoxin), and biological carcinogens (infections from
-            certain viruses, bacteria, or parasites).
+            To sustain rapid growth, tumors hijack the body's resources through
+            angiogenesis—the formation of new blood vessels. By creating their
+            own nutrient supply line, cancer cells can grow larger and
+            eventually gain access to the circulatory system.
           </p>
         </div>
 
         <div class="info-block">
-          <h2>Classification and Types</h2>
-          <ul>
+          <h2>Detailed Classification</h2>
+          <ul class="type-list">
             <li>
-              <strong>Carcinomas:</strong> Originating in epithelial tissues
-              (Lung, Breast, Prostate).
+              <strong>Adenocarcinomas:</strong> Cancers that form in glandular
+              cells, which secrete fluids like mucus or digestive juices.
             </li>
             <li>
-              <strong>Sarcomas:</strong> Originating in mesenchymal tissues
-              (Bone, Cartilage, Fat).
+              <strong>Basal Cell Carcinoma:</strong> A cancer that begins in the
+              lower layer of the epidermis, the outer layer of skin.
             </li>
             <li>
-              <strong>Leukemias:</strong> Originating in blood-forming tissues
-              (Bone marrow).
-            </li>
-            <li>
-              <strong>Lymphomas:</strong> Originating in the immune system
-              cells.
+              <strong>Multiple Myeloma:</strong> Cancer that begins in plasma
+              cells, another type of immune cell that produces antibodies.
             </li>
           </ul>
         </div>
 
-        <hr />
-
         <div class="prominent-features">
-          <h2>Prominent Clinical Dimensions</h2>
+          <h2>Multidisciplinary Management</h2>
           <div class="features-grid">
             <div class="feature-card">
-              <h3>1. Survival Statistics</h3>
+              <h3>Targeted Therapy</h3>
               <p>
-                Analysis of five-year relative survival rates based on clinical
-                staging (Localized, Regional, and Distant metastasis).
+                Drugs designed to target specific proteins or genes that
+                contribute to cancer growth.
               </p>
             </div>
             <div class="feature-card">
-              <h3>2. Genetic Risk Factors</h3>
+              <h3>Liquid Biopsy</h3>
               <p>
-                Identification of hereditary mutations, such as BRCA1 and BRCA2,
-                that significantly elevate susceptibility to specific
-                malignancies.
+                A non-invasive test that detects cancer cells or DNA fragments
+                circulating in the blood.
               </p>
             </div>
             <div class="feature-card">
-              <h3>3. Diagnostic Procedures</h3>
+              <h3>Radiation Oncology</h3>
               <p>
-                Utilization of high-resolution computed tomography (CT),
-                magnetic resonance imaging (MRI), and histopathological biopsy
-                for definitive diagnosis.
-              </p>
-            </div>
-            <div class="feature-card">
-              <h3>4. Treatment Modalities</h3>
-              <p>
-                Integration of chemotherapy, radiotherapy, immunotherapy, and
-                precision targeted molecular therapy based on the tumor profile.
-              </p>
-            </div>
-            <div class="feature-card">
-              <h3>5. Preventive Measures</h3>
-              <p>
-                Implementation of primary prevention strategies including
-                tobacco cessation, vaccination (HPV/Hepatitis B), and routine
-                clinical screenings.
+                Using ionizing radiation to damage the DNA of cancerous tissue,
+                preventing replication.
               </p>
             </div>
           </div>
@@ -135,18 +130,50 @@
       </section>
     </div>
 
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-section brand">
+          <h2>Health<span>Bridge</span></h2>
+          <p>
+            Global leader in clinical diagnostic analytics and oncology research
+            data.
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="../../index.html">Clinical Home</a></li>
+            <li><a href="../wellness.html">Wellness Hub</a></li>
+            <li><a href="../primary-drugs.html">Drug Database</a></li>
+            <li><a href="../contact.html">Support</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Medical Services</h3>
+          <ul>
+            <li><a href="../services/heart-risk.html">Heart Analytics</a></li>
+            <li><a href="../services/hypertension.html">Blood Pressure</a></li>
+            <li><a href="../services/fever.html">Respiratory Check</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 HealthBridge Clinical Oncology. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script src="../../script.js"></script>
     <script>
-      // Automatic Image Slider Logic
       let currentIndex = 0;
       const slides = document.querySelectorAll(".slide");
-
       function changeSlide() {
         slides[currentIndex].classList.remove("active");
         currentIndex = (currentIndex + 1) % slides.length;
         slides[currentIndex].classList.add("active");
       }
-
-      setInterval(changeSlide, 2000); // 2 seconds interval
+      setInterval(changeSlide, 2000);
     </script>
   </body>
 </html>

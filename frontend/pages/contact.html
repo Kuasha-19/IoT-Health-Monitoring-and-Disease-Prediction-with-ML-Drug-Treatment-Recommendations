@@ -14,98 +14,188 @@
   <body>
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../index.html'">
-        <span>HealthBridge</span>
+        Health<span>Bridge</span>
       </div>
+
       <ul class="nav-links">
-        <li class="nav-item"><a href="../index.html">Home</a></li>
+        <li class="nav-item mega-dropdown">
+          <a href="#">Disease</a>
+          <div class="mega-menu">
+            <div class="mega-menu-content">
+              <h3 class="menu-title">Medical Conditions and Diseases</h3>
+              <div class="mega-menu-grid" id="diseaseGrid"></div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#">Services</a>
+          <div class="dropdown">
+            <a href="services/heart-risk.html">Heart Risk</a>
+            <a href="services/fever.html">Fever Respiratory</a>
+            <a href="services/hypertension.html">Hypertension</a>
+            <a href="services/hypotension.html">Hypotension</a>
+            <a href="services/normal.html">General Checkup</a>
+          </div>
+        </li>
+
         <li class="nav-item"><a href="wellness.html">Wellness</a></li>
         <li class="nav-item"><a href="primary-drugs.html">Drugs</a></li>
         <li class="nav-item"><a href="foods.html">Foods</a></li>
+        <li class="nav-item"><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
 
     <header class="contact-header">
-      <h1>Clinical Support Center</h1>
-      <p>Connect with our medical administration or technical support team.</p>
+      <div class="hero-tag">Clinical Support</div>
+      <h1>Connect With <span>Medical Support.</span></h1>
+      <p>
+        Our administration and technical teams are available for your inquiries.
+      </p>
     </header>
 
     <main class="contact-container">
-      <div class="contact-wrapper">
-        <div class="contact-info">
-          <div class="info-card">
-            <h2>Emergency Assistance</h2>
-            <p>
-              For immediate life-threatening emergencies, please dial your local
-              emergency number (e.g., 911 or 999) immediately.
-            </p>
-          </div>
+      <div class="contact-card">
+        <div class="contact-form-section">
+          <form id="medicalContactForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input
+                  type="text"
+                  id="full_name"
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Medical ID (Optional)</label>
+                <input type="text" id="medical_id" placeholder="PAT-12345" />
+              </div>
+            </div>
 
-          <div class="info-details">
-            <div class="detail-item">
-              <strong>Clinical Headquarters</strong>
-              <p>123 Medical Plaza, Health District<br />Dhaka, Bangladesh</p>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="official@mail.com"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phone" placeholder="+880..." required />
+              </div>
             </div>
-            <div class="detail-item">
-              <strong>Electronic Mail</strong>
-              <p>support@healthbridge.com<br />clinical@healthbridge.com</p>
-            </div>
-            <div class="detail-item">
-              <strong>Operating Hours</strong>
-              <p>Monday - Friday: 08:00 - 20:00<br />Saturday: 09:00 - 15:00</p>
-            </div>
-          </div>
-        </div>
 
-        <div class="contact-form-container">
-          <form class="contact-form" id="medicalContactForm">
-            <div class="form-group">
-              <label>Full Name</label>
-              <input
-                type="text"
-                placeholder="Enter your official name"
-                required
-              />
-            </div>
-            <div class="form-group">
-              <label>Medical ID (Optional)</label>
-              <input type="text" placeholder="e.g. PAT-12345" />
-            </div>
             <div class="form-group">
               <label>Subject of Inquiry</label>
-              <select required>
-                <option value="">Select a department</option>
-                <option value="technical">Technical Support</option>
-                <option value="clinical">Clinical Question</option>
-                <option value="billing">Administrative/Billing</option>
-                <option value="partnership">Professional Partnership</option>
+              <select id="subject" required>
+                <option value="">Select Department</option>
+                <option value="Technical Support">Technical Support</option>
+                <option value="Clinical Question">Clinical Question</option>
+                <option value="Billing">Billing & Admin</option>
               </select>
             </div>
+
             <div class="form-group">
               <label>Message</label>
               <textarea
+                id="message"
                 rows="5"
-                placeholder="Describe your inquiry in detail..."
+                placeholder="Detailed description..."
                 required
               ></textarea>
             </div>
+
             <button type="submit" class="btn-submit">Submit Inquiry</button>
           </form>
+        </div>
+
+        <div class="contact-sidebar">
+          <div class="sidebar-item">
+            <h3>Clinical Headquarters</h3>
+            <p>123 Medical Plaza, Health District<br />Dhaka, Bangladesh</p>
+          </div>
+          <div class="sidebar-item">
+            <h3>Emergency Notice</h3>
+            <p>
+              For life-threatening situations, dial 911 or your local emergency
+              line immediately.
+            </p>
+          </div>
         </div>
       </div>
     </main>
 
-    <footer class="service-footer">
+    <footer class="footer">
       <div class="footer-container">
-        <div class="nutritional-disclaimer">
-          <strong>Privacy Notice:</strong> All communications through this
-          portal are encrypted. We comply with international healthcare data
-          protection standards to ensure your medical inquiries remain
-          confidential.
+        <div class="footer-section brand">
+          <h2>Health<span>Bridge</span></h2>
+          <p>
+            Providing advanced diagnostic insights and clinical analytics for a
+            healthier tomorrow.
+          </p>
         </div>
-        <p class="footer-copyright">
-          HealthBridge Clinical Support &copy; 2026 | Secure Portal
-        </p>
+
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="wellness.html">Wellness Hub</a></li>
+            <li><a href="primary-drugs.html">Drug Database</a></li>
+            <li><a href="foods.html">Nutritional Guide</a></li>
+            <li><a href="contact.html">Support</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Medical Services</h3>
+          <ul>
+            <li><a href="services/heart-risk.html">Heart Analytics</a></li>
+            <li><a href="services/hypertension.html">Blood Pressure</a></li>
+            <li><a href="services/fever.html">Respiratory Check</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 HealthBridge Clinical Systems. All rights reserved.</p>
       </div>
     </footer>
+
+    <script src="../script.js"></script>
+    <script>
+      document
+        .getElementById("medicalContactForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = {
+            full_name: document.getElementById("full_name").value,
+            medical_id: document.getElementById("medical_id").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+            subject: document.getElementById("subject").value,
+            message: document.getElementById("message").value,
+          };
+
+          try {
+            const response = await fetch("http://127.0.0.1:8000/contact", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+              alert("Your inquiry has been submitted to the database.");
+              e.target.reset();
+            } else {
+              alert("Failed to save message.");
+            }
+          } catch (error) {
+            alert("Backend Server (FastAPI) is not running.");
+          }
+        });
+    </script>
   </body>
 </html>

@@ -1,124 +1,187 @@
+:root {
+  --midnight: #0f0e47;
+  --lavender: #8686ac;
+  --bg-light: #f1f5f9; /* Professional Light Gray Background */
+  --white: #ffffff;
+  --border-light: #e2e8f0;
+  --transition: all 0.3s ease-in-out;
+}
+
+body {
+  background-color: var(--bg-light);
+  color: var(--midnight);
+  overflow-x: hidden;
+}
+
+/* Force consistency with main navbar */
+.navbar {
+  background: var(--midnight) !important;
+}
+
+/* --- Hero Section --- */
 .foods-hero {
-  background: #1e293b;
-  padding: 80px 5%;
+  background: var(--midnight);
+  padding: 100px 8%;
   text-align: center;
-  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.hero-tag {
+  color: var(--lavender);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 15px;
 }
 
 .foods-hero h1 {
-  font-size: 3rem;
-  margin-bottom: 10px;
+  font-size: 3.8rem;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.1;
 }
 
+.foods-hero h1 span {
+  color: var(--lavender);
+}
+.foods-hero p {
+  color: var(--lavender);
+  margin-top: 15px;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --- Main Container --- */
 .foods-container {
-  max-width: 1100px;
-  margin: 80px auto;
-  padding: 0 40px;
+  max-width: 1200px;
+  margin: 60px auto 120px;
+  padding: 0 4%;
 }
 
-.food-item {
-  display: flex;
-  align-items: center;
-  gap: 80px;
-  margin-bottom: 120px;
+/* --- New Grid Layout --- */
+.foods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
 }
 
-.food-item.reverse {
-  flex-direction: row-reverse;
-}
-
-.food-image {
-  flex: 1;
-  height: 300px;
-  border-radius: 15px;
+/* --- Redesigned Food Card --- */
+.food-card {
+  background: var(--white);
+  border-radius: 8px; /* Subtle roundness */
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(15, 14, 71, 0.06);
+  border: 1px solid var(--border-light);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
 }
 
-.food-image img {
+.food-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(15, 14, 71, 0.1);
+  border-color: var(--lavender);
+}
+
+/* --- Large, Clear Rectangular Images --- */
+.food-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 240px; /* Taller for better visual */
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.food-image-wrapper img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Large, perfectly rectangular image filling the space */
+  transition: transform 0.6s ease;
 }
 
-.food-info {
-  flex: 1;
+.food-card:hover .food-image-wrapper img {
+  transform: scale(1.03);
 }
 
-.food-info h2 {
-  font-size: 2.2rem;
-  color: var(--secondary);
-  margin-bottom: 20px;
-  border-bottom: 2px solid #f1f5f9;
-  display: inline-block;
-  padding-bottom: 5px;
-}
-
-.food-info p {
-  color: var(--text-light);
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
-
-.medical-benefit {
-  background: #f8fafc;
-  padding: 20px;
-  border-radius: 12px;
-  border-left: 6px solid var(--primary);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-  margin-top: 30px;
-}
-
-.medical-benefit span {
-  display: block;
-  font-size: 1.1rem;
-  color: var(--primary);
-  margin-top: 5px;
+/* --- Badge Adjustment --- */
+.nutrient-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: var(--lavender);
+  color: var(--midnight);
+  padding: 8px 15px;
   font-weight: 800;
-}
-
-/* --- Footer Alignment & Adjustment --- */
-.service-footer {
-  background: #0f172a;
-  color: white;
-  padding: 80px 5%;
-  text-align: center;
-  margin-top: 100px;
-}
-
-.footer-container {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.nutritional-disclaimer {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 25px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #cbd5e1;
-  margin-bottom: 30px;
-}
-
-.footer-copyright {
-  font-size: 0.85rem;
-  color: #94a3b8;
-  letter-spacing: 1px;
+  font-size: 0.75rem;
   text-transform: uppercase;
+  z-index: 10;
+  border-radius: 2px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* --- Responsive Adjustments --- */
-@media (max-width: 992px) {
-  .food-item {
-    flex-direction: column !important; /* Stack on small screens */
-    text-align: center;
-    gap: 30px;
-  }
+/* --- Content Styling --- */
+.food-content {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
 
-  .food-image {
-    width: 100%;
-    max-width: 500px;
+.food-content h2 {
+  font-size: 1.4rem;
+  color: var(--midnight);
+  margin-bottom: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.food-content p {
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  opacity: 0.9;
+  flex-grow: 1; /* Pushes the target section to the bottom */
+}
+
+/* --- Target Card Styling --- */
+.medical-target {
+  background: #f8fbff;
+  padding: 15px 20px;
+  border-radius: 4px;
+  border-left: 4px solid var(--lavender);
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: auto; /* Always sticks to the bottom of the content section */
+}
+
+.medical-target span {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--midnight);
+  margin-top: 3px;
+  font-weight: 700;
+}
+
+/* --- Footer Alignment --- */
+.footer {
+  background: var(--midnight) !important;
+  padding: 80px 8% 40px;
+  margin-top: 0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .foods-hero h1 {
+    font-size: 2.8rem;
+  }
+  .foods-grid {
+    grid-template-columns: 1fr;
+  }
+  .food-image-wrapper {
+    height: 200px;
   }
 }

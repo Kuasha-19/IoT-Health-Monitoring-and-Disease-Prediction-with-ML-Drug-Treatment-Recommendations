@@ -3,10 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HealthBridge | Primary Drug Directory</title>
+    <title>HealthBridge | Primary Pharmaceutical Directory</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link rel="stylesheet" href="../style.css" />
     <link rel="stylesheet" href="drugs-style.css" />
@@ -14,51 +18,81 @@
   <body>
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../index.html'">
-        <span>HealthBridge</span>
+        Health<span>Bridge</span>
       </div>
       <ul class="nav-links">
+        <li class="nav-item mega-dropdown">
+          <a href="#">Disease</a>
+          <div class="mega-menu">
+            <div class="mega-menu-content">
+              <h3 class="menu-title">Medical Conditions and Diseases</h3>
+              <div class="mega-menu-grid" id="diseaseGrid"></div>
+            </div>
+          </div>
+        </li>
         <li class="nav-item"><a href="../index.html">Home</a></li>
         <li class="nav-item"><a href="wellness.html">Wellness</a></li>
+        <li class="nav-item"><a href="primary-drugs.html">Drugs</a></li>
         <li class="nav-item"><a href="foods.html">Foods</a></li>
         <li class="nav-item"><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
 
     <header class="drugs-header">
-      <div class="header-content">
-        <h1>Primary Pharmaceutical Directory</h1>
-        <p>Search essential medications by name or medical condition.</p>
+      <div class="hero-tag">Pharmacy Database</div>
+      <h1>Clinical <span>Drug Directory.</span></h1>
+      <p>
+        A comprehensive database of essential medications, mechanisms, and
+        indications.
+      </p>
 
-        <div class="search-bar-container">
+      <div class="search-section">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
           <input
             type="text"
             id="drugSearch"
-            placeholder="Search drug name or disease (e.g. Gastritis, Fever)..."
+            placeholder="Search by drug name or medical condition (e.g. Gastritis)..."
             onkeyup="filterDrugs()"
           />
-          <div class="search-info">
-            Viewing <span id="visibleCount">0</span> medical entries
-          </div>
+        </div>
+        <div class="search-meta">
+          Showing <span id="visibleCount">0</span> pharmaceutical entries
         </div>
       </div>
     </header>
 
-    <main class="drugs-main">
+    <main class="drugs-container">
       <div class="drugs-grid" id="drugsGrid"></div>
     </main>
 
-    <footer class="service-footer">
-      <div class="disclaimer-box">
-        <strong>Medical Disclaimer:</strong> This directory is for informational
-        purposes only. It does not substitute professional medical advice,
-        diagnosis, or treatment. Always seek the advice of your physician or
-        other qualified health provider before starting any new medication.
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-section brand">
+          <h2>Health<span>Bridge</span></h2>
+          <div class="disclaimer-alert">
+            <strong>Critical Disclaimer:</strong> This directory is for
+            informational purposes only. Do not self-medicate. Always consult a
+            certified physician for prescriptions.
+          </div>
+        </div>
+        <div class="footer-section">
+          <h3>Directory Links</h3>
+          <ul>
+            <li><a href="foods.html">Nutritional Guide</a></li>
+            <li><a href="wellness.html">Wellness Hub</a></li>
+            <li><a href="contact.html">Medical Support</a></li>
+          </ul>
+        </div>
       </div>
-      <p class="copyright">
-        © 2026 HealthBridge Clinical Systems. All Rights Reserved.
-      </p>
+      <div class="footer-bottom">
+        <p>
+          &copy; 2026 HealthBridge Pharmaceutical Systems. All rights reserved.
+        </p>
+      </div>
     </footer>
 
+    <script src="../script.js"></script>
     <script src="drugs-data.js"></script>
   </body>
 </html>

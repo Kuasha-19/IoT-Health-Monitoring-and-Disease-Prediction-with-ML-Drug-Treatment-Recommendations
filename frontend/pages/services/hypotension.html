@@ -2,7 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Service | Hypotension Analysis</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Service | Hypotension Monitoring & Assessment</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet"
@@ -10,71 +11,154 @@
     <link rel="stylesheet" href="../../style.css" />
     <link rel="stylesheet" href="../../service-style.css" />
   </head>
-  <body>
+  <body class="hypotension-bg">
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../../index.html'">
-        <span>HealthBridge</span>
+        Health<span>Bridge</span>
       </div>
+
       <ul class="nav-links">
-        <li class="nav-item"><a href="../../index.html">Home</a></li>
+        <li class="nav-item mega-dropdown">
+          <a href="#">Disease</a>
+          <div class="mega-menu">
+            <div class="mega-menu-content">
+              <h3 class="menu-title">Medical Conditions and Diseases</h3>
+              <div class="mega-menu-grid" id="diseaseGrid"></div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a href="#">Services</a>
+          <div class="dropdown">
+            <a href="heart-risk.html">Heart Risk</a>
+            <a href="fever.html">Fever Respiratory</a>
+            <a href="hypertension.html">Hypertension</a>
+            <a href="hypotension.html">Hypotension</a>
+            <a href="normal.html">General Checkup</a>
+          </div>
+        </li>
+
+        <li class="nav-item"><a href="../wellness.html">Wellness</a></li>
+        <li class="nav-item"><a href="../primary-drugs.html">Drugs</a></li>
         <li class="nav-item"><a href="../foods.html">Foods</a></li>
         <li class="nav-item"><a href="../contact.html">Contact</a></li>
       </ul>
     </nav>
 
+    <header class="service-hero hypotension-hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="category-tag">Internal Medicine</span>
+        <h1>Hypotension <span>Assessment.</span></h1>
+        <p>
+          Detection of low blood pressure patterns and evaluation of systemic
+          perfusion risks through clinical intelligence.
+        </p>
+      </div>
+    </header>
+
     <main class="service-main">
       <div class="service-container">
-        <header class="service-header">
-          <div class="service-tag">Internal Medicine</div>
-          <h1>Hypotension Assessment</h1>
-          <p>Detection of low blood pressure and systemic perfusion risks.</p>
-        </header>
-
         <div class="service-gallery">
           <div class="image-box">
             <img src="10.jpg" alt="Orthostatic Testing" />
+            <div class="img-label">Orthostatic Evaluation</div>
           </div>
           <div class="image-box">
             <img src="11.jpg" alt="Hydration Level Analysis" />
+            <div class="img-label">Volumetric Analysis</div>
           </div>
           <div class="image-box">
             <img src="12.jpg" alt="Patient Vital Monitoring" />
+            <div class="img-label">Systemic Perfusion</div>
           </div>
         </div>
 
         <div class="service-content-grid">
-          <div class="assessment-card">
+          <section class="assessment-card">
             <h2 class="card-title">Diagnostic Scope</h2>
             <p class="medical-description">
               This assessment identifies abnormally low blood pressure levels
-              that may compromise oxygen delivery to vital organs. It screens
+              that may compromise oxygen delivery to vital organs. By monitoring
+              orthostatic shifts and diastolic thresholds, the system screens
               for symptoms such as syncope, vertigo, and blurred vision to
-              determine if the hypotension is chronic or acute.
+              determine physiological stability.
             </p>
-            <ul class="metrics-list">
-              <li>Diastolic Minimum Threshold Tracking</li>
-              <li>Perfusion Pressure Analysis</li>
-              <li>Orthostatic Variance Mapping</li>
-            </ul>
+
+            <div class="metrics-container">
+              <div class="metric-item">
+                <strong>Diastolic Floor</strong>
+                <span>Minimum Thresholds</span>
+              </div>
+              <div class="metric-item">
+                <strong>Perfusion Pressure</strong>
+                <span>Systemic Analysis</span>
+              </div>
+              <div class="metric-item">
+                <strong>Orthostatic Shift</strong>
+                <span>Variance Mapping</span>
+              </div>
+            </div>
+
             <button
               class="btn-start-test"
               onclick="location.href = '../../predictor.html'"
             >
               Proceed to AI Prediction
             </button>
-          </div>
+          </section>
+
           <aside class="info-sidebar">
             <div class="warning-widget">
               <h3>Medical Alert</h3>
               <p>
                 Immediate intervention is required if low blood pressure is
-                accompanied by confusion, cold/clammy skin, or rapid, shallow
-                breathing (Shock).
+                accompanied by
+                <strong
+                  >confusion, cold/clammy skin, or rapid, shallow breathing
+                  (Shock).</strong
+                >
+              </p>
+            </div>
+
+            <div class="sidebar-info-card">
+              <h4>Clinical Data</h4>
+              <p>
+                Calculates Mean Arterial Pressure (MAP) to ensure vital organs
+                receive sufficient blood flow.
               </p>
             </div>
           </aside>
         </div>
       </div>
     </main>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-section brand">
+          <h2>Health<span>Bridge</span></h2>
+          <p>
+            Standardizing clinical diagnostics through secure, automated
+            physiological monitoring and AI-driven analysis.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="../wellness.html">Wellness Hub</a></li>
+            <li><a href="../primary-drugs.html">Drug Directory</a></li>
+            <li><a href="../contact.html">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; 2026 HealthBridge Clinical Diagnostics. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="../../script.js"></script>
   </body>
 </html>

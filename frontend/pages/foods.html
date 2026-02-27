@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HealthBridge | Nutritional Guidance</title>
+    <title>HealthBridge | Clinical Nutritional Therapy</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet"
@@ -14,227 +14,383 @@
   <body>
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../index.html'">
-        <span>HealthBridge</span>
+        Health<span>Bridge</span>
       </div>
       <ul class="nav-links">
+        <li class="nav-item mega-dropdown">
+          <a href="#">Disease</a>
+          <div class="mega-menu">
+            <div class="mega-menu-content">
+              <h3 class="menu-title">Medical Conditions and Diseases</h3>
+              <div class="mega-menu-grid" id="diseaseGrid"></div>
+            </div>
+          </div>
+        </li>
         <li class="nav-item"><a href="../index.html">Home</a></li>
         <li class="nav-item"><a href="wellness.html">Wellness</a></li>
-        <li class="nav-item"><a href="primary-drugs.html">Primary Drugs</a></li>
+        <li class="nav-item"><a href="primary-drugs.html">Drugs</a></li>
+        <li class="nav-item"><a href="foods.html">Foods</a></li>
+        <li class="nav-item"><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
 
     <header class="foods-hero">
-      <h1>Nutritional Therapy</h1>
-      <p>Using nature's pharmacy to prevent and manage clinical conditions.</p>
+      <div class="hero-tag">Clinical Nutrition</div>
+      <h1>Nature's <span>Pharmacy.</span></h1>
+      <p>
+        A data-driven database of bioactive compounds to prevent and manage
+        chronic clinical conditions.
+      </p>
     </header>
 
     <main class="foods-container">
-      <section class="food-item">
-        <div class="food-image"><img src="10.jpg" alt="Garlic" /></div>
-        <div class="food-info">
-          <h2>Garlic (Allium sativum)</h2>
-          <p>
-            Contains Allicin, which has potent medicinal properties including
-            antimicrobial and anti-inflammatory effects.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Hypertension and Cardiovascular Health</span>
+      <div class="foods-grid">
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Allicin</span>
+            <img src="10.jpg" alt="Garlic" />
+          </div>
+          <div class="food-content">
+            <h2>Garlic (Allium sativum)</h2>
+            <p>
+              Garlic's primary bioactive compound, Allicin (formed when raw
+              garlic is crushed), exhibits strong antimicrobial, antifungal, and
+              antiviral properties. In cardiovascular health, it significantly
+              improves vascular elasticity and reduces the synthesis of
+              cholesterol by inhibiting the HMG-CoA reductase enzyme.
+            </p>
+            <div class="medical-target">
+              Clinical Target:
+              <span>Hypertension and Cardiovascular Health</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item reverse">
-        <div class="food-image"><img src="11.jpg" alt="Turmeric" /></div>
-        <div class="food-info">
-          <h2>Turmeric</h2>
-          <p>
-            Rich in Curcumin, a bioactive substance that fights inflammation at
-            the molecular level.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Arthritis and Chronic Inflammation</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Curcumin</span>
+            <img src="11.jpg" alt="Turmeric" />
+          </div>
+          <div class="food-content">
+            <h2>Turmeric Root</h2>
+            <p>
+              Contains Curcumin, a powerful polyphenol. Curcumin fights systemic
+              inflammation at the molecular level by blocking NF-kB, a protein
+              molecule that travels into the nuclei of cells and turns on genes
+              related to inflammation. It is highly effective in managing
+              arthritis symptoms and reducing post-exercise muscle soreness.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>Arthritis and Chronic Inflammation</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item">
-        <div class="food-image"><img src="12.jpg" alt="Spinach" /></div>
-        <div class="food-info">
-          <h2>Spinach</h2>
-          <p>
-            Loaded with iron, calcium, and antioxidants that support bone health
-            and blood production.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Anemia and Bone Density Loss</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Iron + Ca</span>
+            <img src="12.jpg" alt="Spinach" />
+          </div>
+          <div class="food-content">
+            <h2>Leafy Spinach</h2>
+            <p>
+              Loaded with non-heme iron for hemoglobin production and
+              bone-strengthening calcium. It is rich in glycolipids, which help
+              prevent cancer cell proliferation. Its high antioxidant content
+              (lutein and zeaxanthin) is critical for protecting the eyes from
+              oxidative stress, maintaining bone mineral density, and promoting
+              healthy red blood cell counts.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>Anemia and Osteoporosis Prevention</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item reverse">
-        <div class="food-image"><img src="13.jpg" alt="Salmon" /></div>
-        <div class="food-info">
-          <h2>Fatty Fish (Salmon)</h2>
-          <p>
-            A premier source of Omega-3 fatty acids, essential for brain
-            function and heart health.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Heart Disease and Cognitive Decline</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Omega-3</span>
+            <img src="13.jpg" alt="Salmon" />
+          </div>
+          <div class="food-content">
+            <h2>Fatty Fish (Salmon)</h2>
+            <p>
+              A premier source of Omega-3 fatty acids (EPA and DHA). These are
+              essential for neuro-protection and brain function. Clinically,
+              they reduce the risk of arrhythmias, lower triglycerides, and slow
+              the growth of atherosclerotic plaques, making salmon a critical
+              food for managing cardiac health and preventing cognitive decline.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>Heart Disease and Cognitive Health</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item">
-        <div class="food-image"><img src="14.jpg" alt="Blueberries" /></div>
-        <div class="food-info">
-          <h2>Blueberries</h2>
-          <p>
-            High in anthocyanins which protect the body from DNA damage and
-            oxidative stress.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Cancer Prevention and Memory Retention</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Anthocyanins</span>
+            <img src="14.jpg" alt="Blueberries" />
+          </div>
+          <div class="food-content">
+            <h2>Blueberries</h2>
+            <p>
+              Loaded with high concentrations of anthocyanins, which give them
+              their color. These antioxidants have neuroprotective effects,
+              directly improving the communication between brain cells and
+              slowing down age-related memory decline. Clinically, they help
+              reduce the risk of DNA damage, which is a key driver of various
+              types of cancer.
+            </p>
+            <div class="medical-target">
+              Clinical Target:
+              <span>Cancer Prevention and Memory Retention</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item reverse">
-        <div class="food-image"><img src="15.jpg" alt="Broccoli" /></div>
-        <div class="food-info">
-          <h2>Broccoli</h2>
-          <p>
-            Contains sulforaphane, which may reduce the risk of various chronic
-            diseases.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Immune Support and Gut Health</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Sulforaphane</span>
+            <img src="15.jpg" alt="Broccoli" />
+          </div>
+          <div class="food-content">
+            <h2>Broccoli</h2>
+            <p>
+              A potent source of Sulforaphane, a sulfur-rich compound that is
+              activated when broccoli is chewed. It helps neutralize carcinogens
+              and reduce inflammation by inhibiting the production of enzymes
+              that damage joints. It supports immune function and contains
+              fibers that promote a healthy gut microbiome, crucial for
+              efficient digestive processes.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>Immune Support and Gut Health</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item">
-        <div class="food-image"><img src="16.jpg" alt="Ginger" /></div>
-        <div class="food-info">
-          <h2>Ginger</h2>
-          <p>
-            Effective in speeding up stomach emptying, which can be beneficial
-            for people with indigestion.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Gastritis and Nausea</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Gingerol</span>
+            <img src="16.jpg" alt="Ginger" />
+          </div>
+          <div class="food-content">
+            <h2>Ginger Root</h2>
+            <p>
+              The primary bioactive compound, Gingerol, is responsible for much
+              of its medicinal properties. Gingerol has powerful
+              anti-inflammatory and antioxidant effects. Clinically, it speeds
+              up stomach emptying, which is highly beneficial for patients with
+              indigestion and promotes the restoration of the stomach lining in
+              cases of gastritis.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>Gastritis and Nausea</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item reverse">
-        <div class="food-image"><img src="17.jpg" alt="Walnuts" /></div>
-        <div class="food-info">
-          <h2>Walnuts</h2>
-          <p>
-            Provides healthy fats and polyphenols that help lower LDL
-            cholesterol.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>High Cholesterol and Brain Health</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Polyphenols</span>
+            <img src="17.jpg" alt="Walnuts" />
+          </div>
+          <div class="food-content">
+            <h2>Walnuts</h2>
+            <p>
+              Walnuts have a significantly higher antioxidant content than any
+              other common nut. They provide healthy fats, including
+              alpha-linolenic acid (ALA), an Omega-3. Polyphenols found in
+              walnuts help lower LDL (bad) cholesterol levels. Clinically,
+              regular consumption can reduce oxidative stress and inflammation,
+              supporting overall brain health and preventing vascular disorders.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>High Cholesterol and Brain Health</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item">
-        <div class="food-image"><img src="18.jpg" alt="Oats" /></div>
-        <div class="food-info">
-          <h2>Whole Oats</h2>
-          <p>
-            Contains Beta-Glucan fiber which helps reduce blood sugar and
-            insulin response.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Diabetes and Obesity</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Beta-Glucan</span>
+            <img src="18.jpg" alt="Oats" />
+          </div>
+          <div class="food-content">
+            <h2>Whole Oats</h2>
+            <p>
+              Whole oats contain a specific type of soluble fiber called
+              Beta-Glucan. When digested, Beta-Glucan forms a thick gel in the
+              gut, which helps reduce levels of bad cholesterol and stabilizes
+              blood sugar. Clinically, they improve insulin response and promote
+              satiety, making them crucial for managing diabetes and aiding in
+              obesity reduction.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>Diabetes and Obesity</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item reverse">
-        <div class="food-image"><img src="19.jpg" alt="Yogurt" /></div>
-        <div class="food-info">
-          <h2>Greek Yogurt</h2>
-          <p>
-            A probiotic powerhouse that maintains a healthy balance of bacteria
-            in the digestive system.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Digestive Disorders and IBS</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Probiotics</span>
+            <img src="19.jpg" alt="Yogurt" />
+          </div>
+          <div class="food-content">
+            <h2>Greek Yogurt</h2>
+            <p>
+              A primary probiotic food, Greek Yogurt contains live cultures
+              (friendly bacteria) that help restore the natural balance of gut
+              flora. It is rich in protein and calcium. Clinically, it is used
+              to manage various digestive disorders, reduce symptoms of
+              irritable bowel syndrome (IBS), and enhance immune function by
+              maintaining gut microbiome stability.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>Digestive Disorders and IBS</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item">
-        <div class="food-image"><img src="20.jpg" alt="Avocado" /></div>
-        <div class="food-info">
-          <h2>Avocado</h2>
-          <p>
-            Rich in monounsaturated oleic acid, which reduces inflammation and
-            supports skin health.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Vascular Health and Skin Repair</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Oleic Acid</span>
+            <img src="20.jpg" alt="Avocado" />
+          </div>
+          <div class="food-content">
+            <h2>Avocado</h2>
+            <p>
+              Avocados are unique because they are high in healthy
+              monounsaturated fats, specifically oleic acid, which reduces
+              inflammation throughout the body and supports cellular membrane
+              health. Clinically, their fats help the body absorb nutrients from
+              other vegetables and support vascular health, reducing the risk of
+              heart disease.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>Vascular Health and Skin Repair</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item reverse">
-        <div class="food-image"><img src="21.jpg" alt="Green Tea" /></div>
-        <div class="food-info">
-          <h2>Green Tea</h2>
-          <p>
-            Loaded with catechins that improve blood flow and lower cholesterol.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Hypotension Management and Metabolism</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Catechins</span>
+            <img src="21.jpg" alt="Green Tea" />
+          </div>
+          <div class="food-content">
+            <h2>Green Tea</h2>
+            <p>
+              Green Tea is loaded with polyphenols, including catechins (most
+              importantly EGCG). Catechins have powerful antioxidant properties
+              that protect cells from damage. Clinically, they help increase
+              metabolism, improve blood flow, and lower cholesterol, which is
+              beneficial for managing hypotension and supporting overall
+              cardiovascular efficiency.
+            </p>
+            <div class="medical-target">
+              Clinical Target:
+              <span>Hypotension Management and Metabolism</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item">
-        <div class="food-image"><img src="22.jpg" alt="Almonds" /></div>
-        <div class="food-info">
-          <h2>Almonds</h2>
-          <p>High in Vitamin E, which protects cells from oxidative damage.</p>
-          <div class="medical-benefit">
-            Better for: <span>Alzheimer's Prevention and Eye Health</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Vitamin E</span>
+            <img src="22.jpg" alt="Almonds" />
+          </div>
+          <div class="food-content">
+            <h2>Almonds</h2>
+            <p>
+              Almonds are an exceptional source of Vitamin E, a potent
+              antioxidant that protects cell membranes from oxidative damage.
+              Clinically, regular consumption can help manage healthy blood
+              sugar levels, reduce cholesterol, and lower blood pressure. Their
+              high Vitamin E content is critical for eye health and has
+              neuroprotective properties.
+            </p>
+            <div class="medical-target">
+              Clinical Target:
+              <span>Alzheimer's Prevention and Eye Health</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item reverse">
-        <div class="food-image"><img src="23.jpg" alt="Sweet Potatoes" /></div>
-        <div class="food-info">
-          <h2>Sweet Potatoes</h2>
-          <p>
-            Excellent source of beta-carotene, converted to Vitamin A in the
-            body.
-          </p>
-          <div class="medical-benefit">
-            Better for: <span>Vision Protection and Immune Function</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Beta-Carotene</span>
+            <img src="23.jpg" alt="Sweet Potatoes" />
+          </div>
+          <div class="food-content">
+            <h2>Sweet Potatoes</h2>
+            <p>
+              Sweet Potatoes get their color from Beta-Carotene, an antioxidant
+              that is converted into Vitamin A in the body. Vitamin A is
+              critical for vision, bone health, and maintaining the immune
+              system. Clinically, they provide a steady release of energy and
+              help maintain healthy mucosal linings, protecting the body from
+              infections.
+            </p>
+            <div class="medical-target">
+              Clinical Target:
+              <span>Vision Protection and Immune Function</span>
+            </div>
           </div>
         </div>
-      </section>
 
-      <section class="food-item">
-        <div class="food-image"><img src="24.jpg" alt="Flaxseeds" /></div>
-        <div class="food-info">
-          <h2>Flaxseeds</h2>
-          <p>Contains lignans and fiber that help improve hormonal balance.</p>
-          <div class="medical-benefit">
-            Better for: <span>Hormonal Disorders and Digestion</span>
+        <div class="food-card">
+          <div class="food-image-wrapper">
+            <span class="nutrient-badge">Lignans</span>
+            <img src="24.jpg" alt="Flaxseeds" />
+          </div>
+          <div class="food-content">
+            <h2>Flaxseeds</h2>
+            <p>
+              Flaxseeds are exceptional sources of both soluble and insoluble
+              fiber, which promotes regular bowel movements and gut stability.
+              They are premier sources of Lignans, phytoestrogens that have
+              antioxidant properties and support hormonal balance. Clinically,
+              they are used to manage hormonal disorders and chronic digestive
+              issues.
+            </p>
+            <div class="medical-target">
+              Clinical Target: <span>Hormonal Disorders and Digestion</span>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
     </main>
 
-    <footer class="service-footer">
-      <p>HealthBridge Nutritional Database &copy; 2026</p>
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-section brand">
+          <h2>Health<span>Bridge</span></h2>
+          <div class="nutritional-disclaimer">
+            <strong>Medical Disclaimer:</strong> This database is for
+            educational purposes and reflects clinical research. Consult a
+            healthcare professional before starting any specialized therapeutic
+            diet.
+          </div>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="wellness.html">Wellness Hub</a></li>
+            <li><a href="primary-drugs.html">Drug Database</a></li>
+            <li><a href="contact.html">Clinical Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; 2026 HealthBridge Nutritional Database. All rights reserved.
+        </p>
+      </div>
     </footer>
+
+    <script src="../script.js"></script>
   </body>
 </html>

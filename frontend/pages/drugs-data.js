@@ -1,5 +1,10 @@
+/**
+ * HealthBridge | Pharmaceutical Database
+ * 100 Clinical Drug Entries Categorized by Indication
+ */
+
 const drugDatabase = [
-    // --- PAIN & FEVER (1-10) ---
+    // --- PAIN, FEVER & INFLAMMATION (1-10) ---
     { name: "Paracetamol", diseases: ["Fever", "Headache", "Body Pain"], desc: "Analgesic and antipyretic used for mild pain and fever reduction." },
     { name: "Ibuprofen", diseases: ["Arthritis", "Menstrual Pain", "Inflammation"], desc: "NSAID used for reducing hormones that cause inflammation and pain." },
     { name: "Aspirin", diseases: ["Heart Attack Risk", "Blood Clot", "Pain"], desc: "Antipyretic and blood thinner used to prevent cardiovascular events." },
@@ -11,7 +16,7 @@ const drugDatabase = [
     { name: "Mefenamic Acid", diseases: ["Menstrual Cramps", "Dental Pain"], desc: "Used for short-term relief of mild to moderate pain." },
     { name: "Nimesulide", diseases: ["Acute Pain", "Dysmenorrhea"], desc: "NSAID with pain-relieving and fever-reducing properties." },
 
-    // --- GASTROINTESTINAL (11-25) ---
+    // --- GASTROINTESTINAL & ACIDITY (11-25) ---
     { name: "Omeprazole", diseases: ["Gastritis", "Acid Reflux", "Heartburn"], desc: "Proton pump inhibitor that reduces stomach acid." },
     { name: "Pantoprazole", diseases: ["Stomach Ulcer", "Esophagitis"], desc: "Used for healing acid-related damage to the stomach lining." },
     { name: "Domperidone", diseases: ["Nausea", "Vomiting", "Indigestion"], desc: "Anti-emetic that increases movements in the digestive tract." },
@@ -24,7 +29,7 @@ const drugDatabase = [
     { name: "Hyoscine", diseases: ["Abdominal Pain", "Bladder Spasm"], desc: "Relaxes smooth muscle in the gastrointestinal system." },
     { name: "Bisacodyl", diseases: ["Constipation"], desc: "Stimulant laxative that increases bowel movement." },
     { name: "Meclizine", diseases: ["Motion Sickness", "Vertigo"], desc: "Antihistamine used to prevent nausea and dizziness." },
-    { name: "Ondansetron", diseases: ["Severe Nausea", "Vomiting"], desc: "Used to prevent nausea caused by surgery or potent medications." },
+    { name: "Ondansetron", diseases: ["Severe Nausea", "Vomiting"], desc: "Used to prevent nausea caused by surgery or chemotherapy." },
     { name: "Rabeprazole", diseases: ["Acidity", "H. Pylori Infection"], desc: "Suppresses gastric acid secretion via enzyme inhibition." },
     { name: "Aluminum Hydroxide", diseases: ["Heartburn", "Acid Indigestion"], desc: "Antacid used for rapid neutralization of stomach acid." },
 
@@ -38,7 +43,7 @@ const drugDatabase = [
     { name: "Guaifenesin", diseases: ["Chest Congestion", "Productive Cough"], desc: "Expectorant that helps thin and loosen mucus in the lungs." },
     { name: "Budesonide", diseases: ["Asthma", "Crohn's Disease"], desc: "Steroid that reduces inflammation in the respiratory tract." },
     { name: "Levocetirizine", diseases: ["Chronic Hives", "Allergy"], desc: "More potent version of cetirizine for persistent allergies." },
-    { name: "Ambroxol", diseases: ["Mucus Congestion", "Sore Throat"], desc: "Secretolytic agent used to treat respiratory diseases with viscid mucus." },
+    { name: "Ambroxol", diseases: ["Mucus Congestion", "Sore Throat"], desc: "Secretolytic agent used for respiratory diseases with viscid mucus." },
     { name: "Theophylline", diseases: ["Asthma", "Emphysema"], desc: "Relaxes muscles in the chest and lungs to improve breathing." },
     { name: "Fluticasone", diseases: ["Nasal Congestion", "Allergy"], desc: "Nasal steroid used to reduce swelling in the nose." },
     { name: "Bromhexine", diseases: ["Cough with Phlegm"], desc: "Mucolytic used to make phlegm thinner and easier to cough up." },
@@ -46,11 +51,11 @@ const drugDatabase = [
     { name: "Ipratropium", diseases: ["COPD Flare-up", "Asthma"], desc: "Opens up the medium and large airways in the lungs." },
 
     // --- CARDIOVASCULAR (41-55) ---
-    { name: "Amlodipine", diseases: ["Hypertension", "Angina"], desc: "Calcium channel blocker that relaxes heart muscles." },
+    { name: "Amlodipine", diseases: ["Hypertension", "Angina"], desc: "Calcium channel blocker that relaxes blood vessels." },
     { name: "Atorvastatin", diseases: ["High Cholesterol", "Heart Risk"], desc: "Lowers 'bad' cholesterol and raises 'good' cholesterol." },
     { name: "Lisinopril", diseases: ["Hypertension", "Heart Failure"], desc: "ACE inhibitor that improves survival after a heart attack." },
     { name: "Metoprolol", diseases: ["High Blood Pressure", "Chest Pain"], desc: "Beta-blocker used to treat rapid heart rates." },
-    { name: "Losartan", diseases: ["Hypertension", "Kidney Damage"], desc: "Keeps blood vessels from narrowing, which lowers blood pressure." },
+    { name: "Losartan", diseases: ["Hypertension", "Kidney Damage"], desc: "Keeps blood vessels from narrowing, lowering blood pressure." },
     { name: "Furosemide", diseases: ["Edema", "Swelling"], desc: "Diuretic used to reduce excess fluid in the body." },
     { name: "Clopidogrel", diseases: ["Stroke Prevention", "Heart Attack"], desc: "Prevents platelets in your blood from sticking together." },
     { name: "Warfarin", diseases: ["Blood Clots", "Atrial Fibrillation"], desc: "Anticoagulant used to treat and prevent blood clots." },
@@ -65,7 +70,7 @@ const drugDatabase = [
     // --- ANTIBIOTICS & INFECTIONS (56-75) ---
     { name: "Amoxicillin", diseases: ["Throat Infection", "Pneumonia"], desc: "Standard antibiotic for bacterial infections." },
     { name: "Azithromycin", diseases: ["Sinusitis", "Bronchitis", "STD"], desc: "Broad-spectrum antibiotic used for respiratory infections." },
-    { name: "Ciprofloxacin", diseases: ["UTI", "Typhoid", "Bone Infection"], desc: "Used for infections that haven't responded to other antibiotics." },
+    { name: "Ciprofloxacin", diseases: ["UTI", "Typhoid", "Bone Infection"], desc: "Used for infections not responding to other antibiotics." },
     { name: "Metronidazole", diseases: ["Diarrhea", "Dental Infection"], desc: "Antibiotic used specifically for anaerobic bacteria." },
     { name: "Doxycycline", diseases: ["Acne", "Malaria Prevention"], desc: "Treats bacterial infections and prevents tropical diseases." },
     { name: "Cephalexin", diseases: ["Skin Infection", "UTI"], desc: "First-generation cephalosporin antibiotic." },
@@ -87,7 +92,7 @@ const drugDatabase = [
     // --- DIABETES & METABOLISM (76-85) ---
     { name: "Metformin", diseases: ["Diabetes Type 2", "PCOS"], desc: "Lowers glucose production in the liver." },
     { name: "Gliclazide", diseases: ["Diabetes Type 2"], desc: "Stimulates insulin secretion from the pancreas." },
-    { name: "Sitagliptin", diseases: ["High Blood Sugar"], desc: "Increases insulin levels after meals and decreases sugar made by body." },
+    { name: "Sitagliptin", diseases: ["High Blood Sugar"], desc: "Increases insulin levels after meals." },
     { name: "Pioglitazone", diseases: ["Insulin Resistance"], desc: "Improves insulin sensitivity in muscle and adipose tissue." },
     { name: "Glimepiride", diseases: ["Diabetes Type 2"], desc: "A sulfonylurea used to control blood sugar levels." },
     { name: "Levothyroxine", diseases: ["Hypothyroidism"], desc: "Synthetic thyroid hormone to replace missing levels." },
@@ -96,13 +101,13 @@ const drugDatabase = [
     { name: "Ferrous Sulfate", diseases: ["Anemia", "Iron Deficiency"], desc: "Essential mineral for red blood cell production." },
     { name: "Folic Acid", diseases: ["Anemia", "Pregnancy Support"], desc: "Helps produce and maintain new cells in the body." },
 
-    // --- MENTAL HEALTH & BRAIN (86-100) ---
+    // --- MENTAL HEALTH & NEUROLOGY (86-100) ---
     { name: "Sertraline", diseases: ["Depression", "OCD", "Panic"], desc: "SSRI that helps balance serotonin in the brain." },
     { name: "Escitalopram", diseases: ["Anxiety", "Depression"], desc: "Used for generalized anxiety disorder." },
     { name: "Diazepam", diseases: ["Anxiety", "Muscle Spasms", "Seizures"], desc: "Benzodiazepine used for calming the nervous system." },
     { name: "Alprazolam", diseases: ["Panic Attacks", "Anxiety"], desc: "Provides rapid relief for acute anxiety symptoms." },
     { name: "Fluoxetine", diseases: ["Bulimia", "Depression"], desc: "SSRI used for various mood and eating disorders." },
-    { name: "Amitriptyline", diseases: ["Nerve Pain", "Depression"], desc: "Tricyclic antidepressant often used for sleep and pain." },
+    { name: "Amitriptyline", diseases: ["Nerve Pain", "Depression"], desc: "Tricyclic antidepressant used for sleep and pain." },
     { name: "Gabapentin", diseases: ["Nerve Pain", "Seizures"], desc: "Used to treat neuropathic pain and shingles pain." },
     { name: "Pregabalin", diseases: ["Fibromyalgia", "Nerve Pain"], desc: "Affects chemicals in the brain that send pain signals." },
     { name: "Donepezil", diseases: ["Alzheimer Disease", "Dementia"], desc: "Improves the function of nerve cells in the brain." },
@@ -114,6 +119,9 @@ const drugDatabase = [
     { name: "Zolpidem", diseases: ["Insomnia", "Sleep Issues"], desc: "Sedative used for the short-term treatment of sleep onset." }
 ];
 
+/**
+ * Initialization and Search Logic
+ */
 function initDrugs() {
     const grid = document.getElementById('drugsGrid');
     const countDisplay = document.getElementById('visibleCount');
@@ -121,11 +129,13 @@ function initDrugs() {
     if (grid) {
         grid.innerHTML = drugDatabase.map(drug => `
             <div class="drug-card" data-search="${drug.name.toLowerCase()} ${drug.diseases.join(' ').toLowerCase()}">
-                <div class="drug-name">${drug.name}</div>
-                <div class="tag-container">
-                    ${drug.diseases.map(d => `<span class="tag">${d}</span>`).join('')}
+                <div class="drug-content">
+                    <div class="drug-name">${drug.name}</div>
+                    <div class="tag-container">
+                        ${drug.diseases.map(d => `<span class="tag">${d}</span>`).join('')}
+                    </div>
+                    <p class="drug-desc">${drug.desc}</p>
                 </div>
-                <p class="drug-desc">${drug.desc}</p>
             </div>
         `).join('');
         

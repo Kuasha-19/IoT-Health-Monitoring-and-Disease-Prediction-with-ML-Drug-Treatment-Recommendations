@@ -24,7 +24,39 @@ app.add_middleware(
 )
 
 # ------------------------------
-# 1. Model & Components Loading
+# 1. Pydantic Models
+# ------------------------------
+class ContactInquiry(BaseModel):
+    full_name: str
+    medical_id: Optional[str] = None
+    email: str
+    phone: str
+    subject: str
+    message: str
+
+class UserSignup(BaseModel):
+    user_id: str
+    name: str
+    email: str
+    role: str
+    password: str
+
+class HealthInput(BaseModel):
+    user_id: str
+    temperature: float
+    heart_rate: float
+    bp_dia: float
+    bp_sys: float
+    humidity: float
+    fever: int
+    cough: int
+    chest_pain: int
+    shortness_breath: int
+    fatigue: int
+    headache: int
+
+# ------------------------------
+# 2. Model & Components Loading
 # ------------------------------
 BASE_DIR = Path(__file__).resolve().parent
 MODEL_PATH = BASE_DIR.parent / "model" / "model_saved.pkl"
@@ -44,7 +76,7 @@ except Exception as e:
     logger.error(f"❌ Failed to load model: {e}")
 
 # ------------------------------
-# 2. Database Connection
+# 3. Database Connection
 # ------------------------------
 def get_db():
     return mysql.connector.connect(
@@ -55,7 +87,7 @@ def get_db():
     )
 
 # ------------------------------
-# 3. Clinical Advice Logic (Drugs & Foods)
+# 4. Clinical Advice Logic (Drugs & Foods)
 # ------------------------------
 def get_clinical_advice(disease, score):
     advice = {"drugs": "Consult Doctor", "foods": "Balanced Diet", "routine": "Rest"}
@@ -116,30 +148,6 @@ def get_clinical_advice(disease, score):
     return advice
 
 # ------------------------------
-# 4. Pydantic Models
-# ------------------------------
-class UserSignup(BaseModel):
-    user_id: str
-    name: str
-    email: str
-    role: str
-    password: str
-
-class HealthInput(BaseModel):
-    user_id: str
-    temperature: float
-    heart_rate: float
-    bp_dia: float
-    bp_sys: float
-    humidity: float
-    fever: int
-    cough: int
-    chest_pain: int
-    shortness_breath: int
-    fatigue: int
-    headache: int
-
-# ------------------------------
 # 5. API Endpoints
 # ------------------------------
 
@@ -148,14 +156,9 @@ async def signup(user: UserSignup):
     db = get_db()
     cursor = db.cursor()
     try:
-        # আপনার টেবিল স্ট্রাকচার অনুযায়ী ৮টি ফিল্ড আছে। 
-        # আমরা ৬টি ফিল্ডে ডাটা ইনসার্ট করছি (id, name, email, password_hash, id_str, role)।
-        # created_at অটোমেটিক তৈরি হবে।
-        
         sql = """INSERT INTO users (id, id_str, name, email, role, password_hash) 
                  VALUES (%s, %s, %s, %s, %s, %s)"""
         
-        # এখানে user.user_id-কে 'id' (PRI) এবং 'id_str' (UNI) দুই কলামেই সেভ করতে হবে।
         cursor.execute(sql, (
             user.user_id,   # id (Primary Key)
             user.user_id,   # id_str (Unique Key)
@@ -170,7 +173,6 @@ async def signup(user: UserSignup):
     except Exception as e:
         db.rollback()
         logger.error(f"Signup Error: {e}")
-        # যদি আইডি বা ইমেইল অলরেডি থাকে তবে এরর দিবে
         raise HTTPException(status_code=400, detail="User ID or Email already exists")
     finally:
         cursor.close()
@@ -194,7 +196,6 @@ async def predict(input_data: HealthInput):
     db = get_db()
     cursor = db.cursor(dictionary=True)
     try:
-        # মডেলের জন্য সঠিক সিকোয়েন্স
         raw_features = [
             input_data.temperature, input_data.heart_rate, input_data.bp_sys, 
             input_data.bp_dia, input_data.humidity, input_data.fever, 
@@ -202,19 +203,15 @@ async def predict(input_data: HealthInput):
             input_data.fatigue, input_data.headache
         ]
         
-        # ডাটা স্কেলিং
         df = pd.DataFrame([raw_features], columns=feature_names)
         df[numerical_cols] = scaler.transform(df[numerical_cols])
         
-        # প্রেডিকশন
         proba = model.predict(df.values, verbose=0)
         disease = label_encoder.inverse_transform([np.argmax(proba)])[0]
         score = round(float(np.max(proba)) * 100, 2)
         
-        # সাজেশন জেনারেট করা (এটি নিশ্চিত করবে null আসবে না)
         advice = get_clinical_advice(disease, score)
 
-        # ডাটাবেসে সঠিক কলামে সেভ করা
         cursor.execute("SELECT id FROM users WHERE id_str = %s", (input_data.user_id,))
         u_record = cursor.fetchone()
         
@@ -231,7 +228,6 @@ async def predict(input_data: HealthInput):
         cursor.close()
         db.close()
 
-# Doctor's Search Patient
 @app.get("/api/search-patient")
 async def search_patient(q: str):
     db = get_db()
@@ -239,7 +235,6 @@ async def search_patient(q: str):
     cursor.execute("SELECT id_str, name, role FROM users WHERE (name LIKE %s OR id_str LIKE %s) AND role='patient'", (f"%{q}%", f"%{q}%"))
     return cursor.fetchall()
 
-# Patient Reports (Recent to Old)
 @app.get("/api/reports/{user_id}")
 async def get_reports(user_id: str):
     db = get_db()
@@ -248,17 +243,13 @@ async def get_reports(user_id: str):
                       WHERE u.id_str = %s ORDER BY p.created_at DESC""", (user_id,))
     return cursor.fetchall()
 
-
 @app.delete("/api/delete-patient/{patient_id}")
 async def delete_patient(patient_id: str):
     db = get_db()
     cursor = db.cursor()
     try:
-        # প্রথমে পেশেন্টের সব প্রেডিকশন ডিলিট করা
         cursor.execute("DELETE FROM predictions WHERE user_id = (SELECT id FROM users WHERE id_str = %s)", (patient_id,))
-        # তারপর ফিডব্যাক ডিলিট করা
         cursor.execute("DELETE FROM doctor_feedback WHERE patient_id = %s", (patient_id,))
-        # সবশেষে ইউজার ডিলিট করা
         cursor.execute("DELETE FROM users WHERE id_str = %s", (patient_id,))
         db.commit()
         return {"status": "success", "message": "Patient records fully removed"}
@@ -273,7 +264,6 @@ async def send_feedback(data: dict):
     db = get_db()
     cursor = db.cursor()
     try:
-        # সরাসরি স্ট্রিং আইডি গুলো সেভ করছি
         sql = "INSERT INTO doctor_feedback (doctor_id_str, patient_id_str, message) VALUES (%s, %s, %s)"
         cursor.execute(sql, (data['doctor_id'], data['patient_id'], data['message']))
         db.commit()
@@ -288,10 +278,28 @@ async def send_feedback(data: dict):
 async def get_feedback(patient_id: str):
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    # পেশেন্টের জন্য মেসেজ খুঁজে বের করা
     cursor.execute("SELECT * FROM doctor_feedback WHERE patient_id_str = %s ORDER BY prescribed_at DESC", (patient_id,))
     return cursor.fetchall()
    
+@app.post("/api/contact")
+async def handle_contact(data: ContactInquiry):
+    db = None
+    try:
+        db = get_db()
+        cursor = db.cursor()
+        sql = """INSERT INTO contact_messages (full_name, medical_id, email, phone, subject, message) 
+                 VALUES (%s, %s, %s, %s, %s, %s)"""
+        values = (data.full_name, data.medical_id, data.email, data.phone, data.subject, data.message)
+        cursor.execute(sql, values)
+        db.commit()
+        return {"status": "success", "message": "Inquiry saved successfully"}
+    except Exception as e:
+        logger.error(f"Contact Form Error: {e}")
+        raise HTTPException(status_code=500, detail="Database connection failed")
+    finally:
+        if db:
+            cursor.close()
+            db.close()
 
 if __name__ == "__main__":
     import uvicorn

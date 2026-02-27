@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HealthBridge | Wellness and Preventive Care</title>
+    <title>HealthBridge | Wellness & Preventive Care</title>
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet"
@@ -14,103 +14,141 @@
   <body>
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../index.html'">
-        <span>HealthBridge</span>
+        Health<span>Bridge</span>
       </div>
       <ul class="nav-links">
+        <li class="nav-item mega-dropdown">
+          <a href="#">Disease</a>
+          <div class="mega-menu">
+            <div class="mega-menu-content">
+              <h3 class="menu-title">Medical Conditions and Diseases</h3>
+              <div class="mega-menu-grid" id="diseaseGrid"></div>
+            </div>
+          </div>
+        </li>
         <li class="nav-item"><a href="../index.html">Home</a></li>
-        <li class="nav-item"><a href="primary-drugs.html">Primary Drugs</a></li>
+        <li class="nav-item"><a href="wellness.html">Wellness</a></li>
+        <li class="nav-item"><a href="primary-drugs.html">Drugs</a></li>
         <li class="nav-item"><a href="foods.html">Foods</a></li>
         <li class="nav-item"><a href="contact.html">Contact</a></li>
       </ul>
     </nav>
 
     <header class="wellness-hero">
-      <div class="hero-text">
-        <span class="category-tag">Holistic Health</span>
-        <h1>Invest in Your Future Self</h1>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-badge">Holistic Analysis</span>
+        <h1>The Science of <span>Longevity.</span></h1>
         <p>
-          True health extends beyond the absence of disease. Explore our
-          scientifically backed pillars of daily wellness.
+          Advanced clinical strategies for maintaining physiological equilibrium
+          and cognitive health.
         </p>
       </div>
     </header>
 
     <main class="wellness-container">
       <section class="wellness-pillar">
-        <div class="pillar-image">
-          <img src="1.jpg" alt="Mindfulness and Meditation" />
+        <div class="pillar-image-box">
+          <img src="1.jpg" alt="Mindfulness Practice" />
         </div>
-        <div class="pillar-content">
-          <h2>Cognitive and Emotional Equilibrium</h2>
+        <div class="pillar-text">
+          <div class="pillar-label">Equilibrium</div>
+          <h2>Cognitive and Emotional Stability</h2>
           <p>
-            Mental wellness involves maintaining a state of well-being where an
-            individual realizes their own abilities and can cope with the normal
-            stresses of life. Chronic stress triggers cortisol release, which
-            can lead to systemic inflammation.
+            Mental wellness is the foundation of systemic health. Chronic
+            psychological stress triggers prolonged cortisol secretion, which
+            degrades immune response. Utilizing mindfulness techniques allows
+            for the regulation of the amygdala, reducing physiological
+            reactivity.
           </p>
-          <div class="tips-grid">
-            <div class="tip">
-              <strong>Mindfulness</strong>
+          <div class="clinical-box">
+            <div class="box-item">
+              <strong>Neuroplasticity</strong>
               <p>
-                10 minutes of daily focused breathing reduces amygdala
-                reactivity.
+                Daily meditation strengthens prefrontal cortex connectivity.
               </p>
             </div>
-            <div class="tip">
-              <strong>Social Connection</strong>
-              <p>
-                Meaningful interactions boost oxytocin and lower blood pressure.
-              </p>
+            <div class="box-item">
+              <strong>Oxytocin Loop</strong>
+              <p>Positive social bonds lower systemic inflammatory markers.</p>
             </div>
           </div>
         </div>
       </section>
 
       <section class="wellness-pillar reverse">
-        <div class="pillar-image">
-          <img src="2.jpg" alt="Optimizing Circadian Rhythm" />
+        <div class="pillar-image-box">
+          <img src="2.jpg" alt="Restorative Sleep Cycles" />
         </div>
-        <div class="pillar-content">
-          <h2>Circadian Rhythm and Restorative Sleep</h2>
+        <div class="pillar-text">
+          <div class="pillar-label">Circadian Logic</div>
+          <h2>Restorative Glymphatic Function</h2>
           <p>
-            During deep sleep, the glymphatic system clears metabolic waste from
-            the brain. Consistent 7-9 hour sleep cycles are essential for immune
-            function and hormonal regulation.
+            Sleep is a metabolic necessity. During non-REM stages, the brain's
+            glymphatic system clears beta-amyloid proteins. Disrupting this
+            rhythm leads to metabolic dysregulation and reduced cellular repair.
           </p>
-          <ul class="wellness-list">
-            <li>Maintain a consistent wake-sleep schedule.</li>
-            <li>Minimize blue light exposure 60 minutes before rest.</li>
-            <li>Ensure a core body temperature drop for optimal REM sleep.</li>
+          <ul class="aesthetic-list">
+            <li><span>Phase 1</span> Maintain strict circadian consistency.</li>
+            <li>
+              <span>Phase 2</span> Eliminate short-wave (blue) light exposure.
+            </li>
+            <li>
+              <span>Phase 3</span> Optimize thermoregulation for deep REM.
+            </li>
           </ul>
         </div>
       </section>
 
       <section class="wellness-pillar">
-        <div class="pillar-image">
-          <img src="3.jpg" alt="Active Lifestyle" />
+        <div class="pillar-image-box">
+          <img src="3.jpg" alt="Metabolic Activity" />
         </div>
-        <div class="pillar-content">
-          <h2>Metabolic Activation</h2>
+        <div class="pillar-text">
+          <div class="pillar-label">Bioenergetics</div>
+          <h2>Mitochondrial & Cardiac Activation</h2>
           <p>
-            Regular physical exertion enhances mitochondrial density and
-            cardiovascular resilience. Aim for a mix of aerobic activity and
-            resistance training to maintain muscular integrity and bone density.
+            Regular physical exertion increases mitochondrial biogenesis and
+            enhances arterial compliance. A balanced integration of resistance
+            and aerobic stress is required for optimal metabolic health.
           </p>
-          <div class="stat-box">
-            <div class="stat">
+          <div class="aesthetic-stat-card">
+            <div class="stat-main">
               <h3>150</h3>
-              <span>Minutes/Week</span>
+              <small>Clinical Minutes</small>
             </div>
-            <p>
-              Minimum recommended moderate aerobic activity for adult health.
-            </p>
+            <div class="stat-desc">
+              <strong>Weekly Standard</strong>
+              <p>Minimum threshold for cardiovascular disease prevention.</p>
+            </div>
           </div>
         </div>
       </section>
     </main>
 
-    <footer class="service-footer">
-      <p>HealthBridge Wellness Initiative - Standardizing Preventive Care</p>
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-section brand">
+          <h2>Health<span>Bridge</span></h2>
+          <p>
+            Providing global clinical insights and analytics for a healthier
+            tomorrow.
+          </p>
+        </div>
+        <div class="footer-section">
+          <h3>Wellness Quick Links</h3>
+          <ul>
+            <li><a href="foods.html">Clinical Nutrition</a></li>
+            <li><a href="primary-drugs.html">Drug Directory</a></li>
+            <li><a href="contact.html">Contact Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 HealthBridge Global Systems. All rights reserved.</p>
+      </div>
     </footer>
+
+    <script src="../script.js"></script>
   </body>
 </html>
