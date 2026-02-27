@@ -1,0 +1,254 @@
+:root {
+  --midnight: #0f0e47;
+  --accent: #8686ac;
+  --bg-workspace: #ffffff;
+  --bg-alt: #f8fafc;
+  --text-dim: #64748b;
+  --white: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background-color: var(--bg-workspace);
+  color: var(--midnight);
+  height: 100vh;
+}
+
+.main-shell {
+  display: flex;
+  height: 100vh;
+}
+
+/* --- Focused Sidebar --- */
+.sidebar {
+  width: 320px; /* Narrowed slightly to give more room to form */
+  background-color: var(--midnight);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 60px 40px;
+  border-right: 8px solid var(--accent);
+}
+
+.brand-mark {
+  font-weight: 900;
+  font-size: 2rem;
+  border: 4px solid var(--accent);
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.brand-text h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+.brand-text h1 span {
+  color: var(--accent);
+}
+
+.brand-text p {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 0.65rem;
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* --- Content Viewport (Compact Adjustment) --- */
+.analysis-viewport {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 60px; /* Reduced top padding from 80px to 40px */
+  overflow-y: auto;
+}
+
+.analysis-card {
+  width: 100%;
+  max-width: 850px;
+}
+
+.card-header {
+  margin-bottom: 30px; /* Reduced from 50px */
+  border-bottom: 2px solid var(--midnight);
+  padding-bottom: 20px;
+}
+
+.card-header h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+}
+
+.card-header p {
+  color: var(--text-dim);
+  margin-top: 8px;
+  font-size: 1rem;
+}
+
+/* --- Form Grids (Tightened) --- */
+.label-heading {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+  color: var(--accent);
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px; /* Reduced from 25px */
+  margin-bottom: 30px; /* Reduced from 50px */
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--midnight);
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 12px; /* Slimmer inputs */
+  border: 2px solid #e2e8f0;
+  border-radius: 0;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--midnight);
+}
+
+.wide {
+  grid-column: span 2;
+}
+
+/* --- Symptom Shell (Grid Layout) --- */
+.symptoms-shell {
+  background-color: var(--bg-alt);
+  padding: 20px 25px; /* More compact */
+  margin-bottom: 30px; /* Reduced from 50px */
+}
+
+.symptom-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns to save vertical space */
+  gap: 15px;
+}
+
+.symptom-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--midnight);
+  cursor: pointer;
+}
+
+.symptom-item label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* --- Action Buttons (Position Fixed) --- */
+.action-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.primary-action-btn {
+  width: 100%;
+  padding: 18px;
+  background-color: var(--midnight);
+  color: white;
+  border: none;
+  border-radius: 0;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.primary-action-btn:hover {
+  background-color: var(--accent);
+}
+
+.secondary-action-btn {
+  background: transparent;
+  border: 2px solid #e2e8f0;
+  padding: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: 0.2s;
+}
+
+.secondary-action-btn:hover {
+  background: #f1f5f9;
+  border-color: var(--midnight);
+}
+
+/* --- Results --- */
+.result-display {
+  margin-top: 30px;
+  border-left: 8px solid var(--midnight);
+  background-color: var(--bg-alt);
+  padding: 30px;
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .symptom-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-shell {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 30px;
+    border-right: none;
+    border-bottom: 8px solid var(--accent);
+  }
+  .analysis-viewport {
+    padding: 30px 20px;
+  }
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
+  .wide {
+    grid-column: span 1;
+  }
+}

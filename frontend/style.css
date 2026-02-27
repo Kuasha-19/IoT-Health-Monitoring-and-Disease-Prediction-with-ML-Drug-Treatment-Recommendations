@@ -4,7 +4,7 @@
   --steel: #505081;
   --lavender: #8686ac;
   --white: #ffffff;
-  --transition: all 0.3s ease;
+  --transition: all 0.2s ease-in-out;
 }
 
 * {
@@ -20,25 +20,25 @@ body {
   overflow-x: hidden;
 }
 
-/* --- Fixed Navbar --- */
+/* --- Fixed Command Navbar --- */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 6%;
-  height: 85px;
+  height: 90px;
   background: var(--midnight);
   position: sticky;
   top: 0;
   z-index: 2000;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 2px solid var(--steel);
 }
 
 .logo {
   cursor: pointer;
-  font-size: 1.7rem;
+  font-size: 1.8rem;
   font-weight: 800;
-  color: var(--white);
+  letter-spacing: -1px;
 }
 .logo span {
   color: var(--lavender);
@@ -47,183 +47,213 @@ body {
 .nav-links {
   display: flex;
   list-style: none;
-  gap: 10px;
+  gap: 5px;
 }
 
 .nav-item > a {
   text-decoration: none;
   color: var(--lavender);
-  font-weight: 600;
-  font-size: 0.95rem;
-  padding: 10px 15px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 15px 20px;
   transition: var(--transition);
 }
 
 .nav-item:hover > a {
-  color: var(--white);
+  background: var(--lavender);
+  color: var(--midnight);
 }
 
-/* --- Fixed Dropdown & Mega Menu --- */
-.dropdown {
-  position: absolute;
-  top: 85px;
-  background: var(--navy);
-  min-width: 220px;
-  padding: 15px 0;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  transition: var(--transition);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.mega-dropdown {
-  position: static;
-}
-
+/* --- Dropdown & Mega Menu (Sharp) --- */
+.dropdown,
 .mega-menu {
   position: absolute;
-  top: 85px;
-  left: 0;
-  width: 100%;
-  background: var(--navy);
-  padding: 40px 6%;
+  top: 90px;
+  background: var(--midnight);
+  border: 2px solid var(--steel);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(15px);
   transition: var(--transition);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   z-index: 1000;
+}
+
+.dropdown {
+  min-width: 250px;
+  padding: 10px 0;
+}
+.mega-menu {
+  left: 0;
+  width: 100%;
+  padding: 50px 6%;
 }
 
 .nav-item:hover .dropdown,
 .nav-item:hover .mega-menu {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
 }
 
-.menu-title {
-  color: var(--white);
+.menu-title,
+.label-heading {
+  color: var(--lavender);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.75rem;
+  font-weight: 800;
   margin-bottom: 25px;
-  font-size: 1.2rem;
-  border-bottom: 1px solid var(--steel);
-  padding-bottom: 10px;
+  display: block;
 }
 
 .mega-menu-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 15px;
+  gap: 10px;
 }
 
 .mega-menu-grid a,
 .dropdown a {
-  color: var(--lavender);
+  color: var(--white);
   text-decoration: none;
-  font-size: 0.9rem;
-  padding: 5px 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 0;
   display: block;
   transition: var(--transition);
 }
 
 .dropdown a {
-  padding: 10px 20px;
+  padding: 12px 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .mega-menu-grid a:hover,
 .dropdown a:hover {
-  color: var(--white);
-  transform: translateX(5px);
+  background: var(--lavender);
+  color: var(--midnight);
+  padding-left: 10px;
 }
 
-/* --- Hero Section --- */
+/* --- Nordic Hero Section --- */
 .hero {
   height: 85vh;
   display: flex;
-  align-items: center;
-  padding: 0 8%;
+  position: relative;
   background:
-    linear-gradient(rgba(15, 14, 71, 0.85), rgba(15, 14, 71, 0.85)),
+    linear-gradient(rgba(15, 14, 71, 0.9), rgba(15, 14, 71, 0.7)),
     url("https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=2000&q=80");
   background-size: cover;
   background-position: center;
 }
 
-.hero-content {
-  max-width: 700px;
+.hero-sidebar-accent {
+  width: 10px;
+  background: var(--lavender);
+  height: 100%;
 }
-.hero-tag {
+
+.hero-content {
+  padding: 80px 6%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.clinical-tag {
   color: var(--lavender);
   text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 0.8rem;
+  letter-spacing: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
   margin-bottom: 20px;
+  display: block;
 }
+
 .hero h1 {
-  font-size: 4rem;
+  font-size: 4.5rem;
   font-weight: 800;
-  margin-bottom: 25px;
-  line-height: 1.1;
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 40px;
 }
 .hero h1 span {
   color: var(--lavender);
 }
-.hero p {
-  color: var(--lavender);
-  margin-bottom: 40px;
-  font-size: 1.15rem;
-  line-height: 1.7;
+
+.hero-body-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  align-items: flex-start;
+  gap: 100px;
 }
 
-.btn-get-started {
-  background: var(--white);
+.hero p {
+  color: var(--lavender);
+  font-size: 1.2rem;
+  line-height: 1.6;
+  border-left: 3px solid var(--steel);
+  padding-left: 30px;
+}
+
+.btn-primary-sharp {
+  background: var(--lavender);
   color: var(--midnight);
   border: none;
-  padding: 18px 45px;
+  padding: 25px 50px;
   font-size: 1rem;
   font-weight: 800;
-  border-radius: 4px;
   cursor: pointer;
   transition: var(--transition);
   text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-.btn-get-started:hover {
-  background: var(--lavender);
-  transform: scale(1.05);
+.btn-primary-sharp:hover {
+  background: var(--white);
+  transform: translateX(10px);
 }
 
-/* --- Footer --- */
+/* --- Footer (Nordic Style) --- */
 .footer {
   background: var(--midnight);
-  padding: 80px 8% 40px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 100px 8% 50px;
+  border-top: 2px solid var(--steel);
 }
 
 .footer-container {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
-  gap: 50px;
+  gap: 80px;
+}
+
+.brand-mark {
+  font-weight: 900;
+  font-size: 1.5rem;
+  border: 3px solid var(--lavender);
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  color: var(--lavender);
 }
 
 .footer-section h2 {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  font-weight: 800;
 }
 .footer-section h2 span {
   color: var(--lavender);
 }
 .footer-section p {
   color: var(--lavender);
-  font-size: 0.95rem;
-  line-height: 1.6;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  opacity: 0.8;
 }
 
-.footer-section h3 {
-  margin-bottom: 25px;
-  color: var(--white);
-  font-size: 1.1rem;
-}
 .footer-section ul {
   list-style: none;
 }
@@ -233,19 +263,24 @@ body {
 
 .footer-section a {
   text-decoration: none;
-  color: var(--lavender);
-  font-size: 0.9rem;
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: var(--transition);
 }
 
 .footer-section a:hover {
-  color: var(--white);
+  color: var(--lavender);
+  padding-left: 5px;
 }
 
 .footer-bottom {
   text-align: center;
-  margin-top: 60px;
+  margin-top: 80px;
   padding-top: 30px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  color: var(--lavender);
-  font-size: 0.8rem;
+  border-top: 1px solid var(--steel);
+  color: var(--steel);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }

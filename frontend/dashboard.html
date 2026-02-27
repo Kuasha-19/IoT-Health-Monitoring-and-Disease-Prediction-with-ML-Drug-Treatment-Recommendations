@@ -3,236 +3,186 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HealthBridge | Portal Dashboard</title>
+    <title>HealthBridge | Clinical Command Center</title>
     <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="dashboard.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-      .hidden {
-        display: none !important;
-      }
-      .split-container {
-        display: flex;
-        gap: 20px;
-        height: calc(100vh - 120px);
-      }
-      .analysis-panel {
-        flex: 1;
-        background: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        overflow-y: auto;
-        border: 1px solid #e0e7ff;
-      }
-      .scrollable-list {
-        max-height: 150px;
-        overflow-y: auto;
-        border: 1px solid #eee;
-        margin-bottom: 15px;
-        border-radius: 6px;
-      }
-      .patient-item {
-        padding: 8px;
-        border-bottom: 1px solid #f5f5f5;
-        cursor: pointer;
-        font-size: 0.9em;
-      }
-      .patient-item:hover {
-        background: #f0f7ff;
-      }
-      .graph-box {
-        margin-bottom: 25px;
-        height: 200px;
-      }
-      .feedback-area {
-        margin-top: 20px;
-        border-top: 2px solid #eee;
-        padding-top: 15px;
-      }
-      textarea {
-        width: 100%;
-        height: 80px;
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #ddd;
-        margin-bottom: 10px;
-        resize: none;
-      }
-      .btn-send {
-        background: #2563eb;
-        color: white;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .btn-delete {
-        background: #ef4444;
-        color: white;
-        padding: 8px 15px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        float: right;
-      }
-      .advice-card {
-        background: #fff4e5;
-        border-left: 4px solid #ff9800;
-        padding: 15px;
-        border-radius: 6px;
-        margin-bottom: 15px;
-      }
-    </style>
   </head>
   <body class="dashboard-body">
     <aside class="sidebar">
-      <div class="sidebar-header">
-        <i class="fas fa-hand-holding-medical"></i>
-        <span>HealthBridge</span>
+      <div class="sidebar-brand">
+        <div class="brand-mark">HB</div>
+        <div class="brand-text">
+          <h1>Health<span>Bridge</span></h1>
+          <p>Clinical Intelligence</p>
+        </div>
       </div>
-      <div class="user-profile-brief">
+
+      <div class="user-identity-card">
         <img
-          src="https://ui-avatars.com/api/?name=User&background=random"
+          src="https://ui-avatars.com/api/?name=User&background=8686AC&color=fff"
           id="userAvatar"
           alt="Profile"
         />
-        <div class="info">
+        <div class="identity-details">
           <h4 id="displayUserName">Loading...</h4>
           <p id="displayUserId">ID: ----</p>
         </div>
       </div>
+
       <nav class="sidebar-nav">
-        <a href="#" class="nav-link active" onclick="showSection('overview')"
-          ><i class="fas fa-th-large"></i> Overview</a
-        >
+        <a href="#" class="nav-link active" onclick="showSection('overview')">
+          Overview
+        </a>
+
         <div id="patientLinks">
-          <a href="pages/predictor.html" class="nav-link"
-            ><i class="fas fa-robot"></i> AI Predictor</a
-          >
-          <a href="#" class="nav-link" onclick="showSection('reports')"
-            ><i class="fas fa-file-medical"></i> My Reports</a
-          >
+          <a href="pages/predictor.html" class="nav-link"> AI Predictor </a>
+          <a href="#" class="nav-link" onclick="showSection('reports')">
+            My Reports
+          </a>
         </div>
+
         <div id="doctorLinks" class="hidden">
-          <a href="#" class="nav-link" onclick="showSection('manage-patients')"
-            ><i class="fas fa-users"></i> Manage Patients</a
-          >
+          <a href="#" class="nav-link" onclick="showSection('manage-patients')">
+            Patient Registry
+          </a>
         </div>
-        <a href="index.html" class="nav-link logout"
-          ><i class="fas fa-sign-out-alt"></i> Logout</a
-        >
+
+        <a href="index.html" class="nav-link logout"> Terminate Session </a>
       </nav>
     </aside>
 
     <main class="main-content">
       <header class="top-bar">
-        <h2 id="sectionTitle">Overview</h2>
+        <div class="context-title">
+          <span class="label-heading">Workspace</span>
+          <h2 id="sectionTitle">Overview</h2>
+        </div>
         <div class="role-badge" id="roleBadge">Patient</div>
       </header>
 
       <section id="overview" class="content-section">
         <div id="patientAdviceArea"></div>
-        <div class="welcome-banner" id="welcomeBanner">
-          <h3>Hello, <span id="welcomeName">User</span>!</h3>
-          <p>Welcome to your portal. Here is your recent health activity.</p>
-          <button
-            id="startCheckupBtn"
-            onclick="window.location.href = 'pages/predictor.html'"
-            style="
-              margin-top: 15px;
-              padding: 10px 20px;
-              background: #fff;
-              color: #2563eb;
-              border: none;
-              border-radius: 8px;
-              font-weight: bold;
-            "
-          >
-            Start Checkup
-          </button>
+
+        <div class="welcome-terminal" id="welcomeBanner">
+          <div class="terminal-content">
+            <h3>SYSTEM_GREETING: <span id="welcomeName">User</span></h3>
+            <p>
+              Authentication successful. Accessing personalized health analytics
+              and risk progression markers.
+            </p>
+            <button
+              id="startCheckupBtn"
+              onclick="window.location.href = 'pages/predictor.html'"
+            >
+              Initialize Analysis
+            </button>
+          </div>
         </div>
-        <div
-          class="chart-container"
-          style="
-            margin-top: 20px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-          "
-        >
-          <h4>Risk Probability Trend</h4>
-          <canvas id="healthChart"></canvas>
+
+        <div class="chart-shell">
+          <div class="shell-header">
+            <span class="label-heading">Analytics</span>
+            <h4>Neural Risk Probability Trend</h4>
+          </div>
+          <div class="canvas-wrapper">
+            <canvas id="healthChart"></canvas>
+          </div>
         </div>
       </section>
 
       <section id="reports" class="content-section hidden">
-        <div id="patientReportList"></div>
+        <div class="shell-header">
+          <span class="label-heading">Records</span>
+          <h4>Diagnostic History</h4>
+        </div>
+        <div id="patientReportList" class="report-grid"></div>
       </section>
 
       <section id="manage-patients" class="content-section hidden">
-        <div class="split-container">
+        <div class="split-viewport">
           <div class="analysis-panel" id="sideA">
-            <input
-              type="text"
-              id="inputA"
-              placeholder="Search Patient A..."
-              onkeyup="liveSearch('A')"
-              style="width: 100%; padding: 10px; margin-bottom: 10px"
-            />
-            <div id="listA" class="scrollable-list"></div>
-            <div id="dataA" class="hidden">
-              <h4 id="nameA">Patient A</h4>
-              <div class="graph-box"><canvas id="chartA_risk"></canvas></div>
-              <div class="graph-box"><canvas id="chartA_hr"></canvas></div>
-              <div class="graph-box"><canvas id="chartA_bp"></canvas></div>
-              <div class="feedback-area">
+            <div class="panel-search">
+              <input
+                type="text"
+                id="inputA"
+                placeholder="QUERY_PATIENT_A..."
+                onkeyup="liveSearch('A')"
+              />
+            </div>
+            <div id="listA" class="scrollable-registry"></div>
+
+            <div id="dataA" class="panel-details hidden">
+              <h4 id="nameA" class="patient-title">Patient A</h4>
+              <div class="metric-grid">
+                <div class="graph-shell">
+                  <canvas id="chartA_risk"></canvas>
+                </div>
+                <div class="graph-shell"><canvas id="chartA_hr"></canvas></div>
+                <div class="graph-shell"><canvas id="chartA_bp"></canvas></div>
+              </div>
+
+              <div class="instruction-terminal">
                 <textarea
                   id="msgA"
-                  placeholder="Type direct instructions for this patient..."
+                  placeholder="Enter clinical instructions..."
                 ></textarea>
-                <button class="btn-send" onclick="sendAdvice('A')">
-                  Send Advice
-                </button>
-                <button class="btn-delete" onclick="deleteRecord('A')">
-                  Delete Data
-                </button>
+                <div class="terminal-actions">
+                  <button class="btn-send" onclick="sendAdvice('A')">
+                    Deploy Advice
+                  </button>
+                  <button class="btn-delete" onclick="deleteRecord('A')">
+                    Purge Data
+                  </button>
+                </div>
               </div>
             </div>
           </div>
+
           <div class="analysis-panel" id="sideB">
-            <input
-              type="text"
-              id="inputB"
-              placeholder="Search Patient B..."
-              onkeyup="liveSearch('B')"
-              style="width: 100%; padding: 10px; margin-bottom: 10px"
-            />
-            <div id="listB" class="scrollable-list"></div>
-            <div id="dataB" class="hidden">
-              <h4 id="nameB">Patient B</h4>
-              <div class="graph-box"><canvas id="chartB_risk"></canvas></div>
-              <div class="graph-box"><canvas id="chartB_hr"></canvas></div>
-              <div class="graph-box"><canvas id="chartB_bp"></canvas></div>
-              <div class="feedback-area">
+            <div class="panel-search">
+              <input
+                type="text"
+                id="inputB"
+                placeholder="QUERY_PATIENT_B..."
+                onkeyup="liveSearch('B')"
+              />
+            </div>
+            <div id="listB" class="scrollable-registry"></div>
+
+            <div id="dataB" class="panel-details hidden">
+              <h4 id="nameB" class="patient-title">Patient B</h4>
+              <div class="metric-grid">
+                <div class="graph-shell">
+                  <canvas id="chartB_risk"></canvas>
+                </div>
+                <div class="graph-shell"><canvas id="chartB_hr"></canvas></div>
+                <div class="graph-shell"><canvas id="chartB_bp"></canvas></div>
+              </div>
+
+              <div class="instruction-terminal">
                 <textarea
                   id="msgB"
-                  placeholder="Type direct instructions for this patient..."
+                  placeholder="Enter clinical instructions..."
                 ></textarea>
-                <button class="btn-send" onclick="sendAdvice('B')">
-                  Send Advice
-                </button>
-                <button class="btn-delete" onclick="deleteRecord('B')">
-                  Delete Data
-                </button>
+                <div class="terminal-actions">
+                  <button class="btn-send" onclick="sendAdvice('B')">
+                    Deploy Advice
+                  </button>
+                  <button class="btn-delete" onclick="deleteRecord('B')">
+                    Purge Data
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
     </main>
+
     <script src="dashboard.js"></script>
   </body>
 </html>
