@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthBridge | Login & Registration</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="auth.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-box">
+        <div class="auth-toggle">
+          <button id="toggleSignin" class="active" onclick="showMode('signin')">
+            Sign In
+          </button>
+          <button id="toggleSignup" onclick="showMode('signup')">
+            Sign Up
+          </button>
+        </div>
+
+        <h2 id="formTitle">Welcome Back</h2>
+        <p id="formSubtitle">
+          Please enter your credentials to access your portal.
+        </p>
+
+        <form id="authForm">
+          <div id="roleSelection" class="form-group hidden">
+            <label>Join as:</label>
+            <div class="role-cards">
+              <div
+                class="role-card active"
+                data-role="patient"
+                onclick="setRole('patient')"
+              >
+                <i class="fas fa-user-injured"></i>
+                <span>Patient</span>
+              </div>
+              <div
+                class="role-card"
+                data-role="doctor"
+                onclick="setRole('doctor')"
+              >
+                <i class="fas fa-user-md"></i>
+                <span>Doctor</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="idField" class="form-group">
+            <label for="userId"><i class="fas fa-id-badge"></i> User ID</label>
+            <input
+              type="text"
+              id="userId"
+              placeholder="Enter your ID (e.g. PAT-XXXX)"
+            />
+          </div>
+
+          <div id="nameField" class="form-group hidden">
+            <label for="userName"><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" id="userName" placeholder="John Doe" />
+          </div>
+
+          <div id="contactField" class="form-group hidden">
+            <label for="userContact"
+              ><i class="fas fa-envelope"></i> Email or Phone</label
+            >
+            <input
+              type="text"
+              id="userContact"
+              placeholder="example@mail.com"
+            />
+          </div>
+
+          <div id="bloodGroupField" class="form-group hidden">
+            <label for="bloodGroup"
+              ><i class="fas fa-tint"></i> Blood Group</label
+            >
+            <select id="bloodGroup">
+              <option value="">Select Blood Group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+          </div>
+
+          <div id="deptField" class="form-group hidden">
+            <label for="department"
+              ><i class="fas fa-stethoscope"></i> Department</label
+            >
+            <input type="text" id="department" placeholder="e.g. Cardiology" />
+          </div>
+
+          <button type="submit" class="btn-auth" id="submitBtn">Sign In</button>
+        </form>
+
+        <div id="messageBox" class="message hidden"></div>
+      </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="login.js"></script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthBridge | Primary Drug Directory</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="drugs-style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo" onclick="location.href = '../index.html'">
+        <span>HealthBridge</span>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item"><a href="../index.html">Home</a></li>
+        <li class="nav-item"><a href="wellness.html">Wellness</a></li>
+        <li class="nav-item"><a href="foods.html">Foods</a></li>
+        <li class="nav-item"><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <header class="drugs-header">
+      <div class="header-content">
+        <h1>Primary Pharmaceutical Directory</h1>
+        <p>Search essential medications by name or medical condition.</p>
+
+        <div class="search-bar-container">
+          <input
+            type="text"
+            id="drugSearch"
+            placeholder="Search drug name or disease (e.g. Gastritis, Fever)..."
+            onkeyup="filterDrugs()"
+          />
+          <div class="search-info">
+            Viewing <span id="visibleCount">0</span> medical entries
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="drugs-main">
+      <div class="drugs-grid" id="drugsGrid"></div>
+    </main>
+
+    <footer class="service-footer">
+      <div class="disclaimer-box">
+        <strong>Medical Disclaimer:</strong> This directory is for informational
+        purposes only. It does not substitute professional medical advice,
+        diagnosis, or treatment. Always seek the advice of your physician or
+        other qualified health provider before starting any new medication.
+      </div>
+      <p class="copyright">
+        © 2026 HealthBridge Clinical Systems. All Rights Reserved.
+      </p>
+    </footer>
+
+    <script src="drugs-data.js"></script>
+  </body>
+</html>

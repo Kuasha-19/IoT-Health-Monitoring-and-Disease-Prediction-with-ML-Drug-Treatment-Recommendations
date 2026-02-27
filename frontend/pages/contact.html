@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HealthBridge | Clinical Support & Contact</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="contact-style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo" onclick="location.href = '../index.html'">
+        <span>HealthBridge</span>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item"><a href="../index.html">Home</a></li>
+        <li class="nav-item"><a href="wellness.html">Wellness</a></li>
+        <li class="nav-item"><a href="primary-drugs.html">Drugs</a></li>
+        <li class="nav-item"><a href="foods.html">Foods</a></li>
+      </ul>
+    </nav>
+
+    <header class="contact-header">
+      <h1>Clinical Support Center</h1>
+      <p>Connect with our medical administration or technical support team.</p>
+    </header>
+
+    <main class="contact-container">
+      <div class="contact-wrapper">
+        <div class="contact-info">
+          <div class="info-card">
+            <h2>Emergency Assistance</h2>
+            <p>
+              For immediate life-threatening emergencies, please dial your local
+              emergency number (e.g., 911 or 999) immediately.
+            </p>
+          </div>
+
+          <div class="info-details">
+            <div class="detail-item">
+              <strong>Clinical Headquarters</strong>
+              <p>123 Medical Plaza, Health District<br />Dhaka, Bangladesh</p>
+            </div>
+            <div class="detail-item">
+              <strong>Electronic Mail</strong>
+              <p>support@healthbridge.com<br />clinical@healthbridge.com</p>
+            </div>
+            <div class="detail-item">
+              <strong>Operating Hours</strong>
+              <p>Monday - Friday: 08:00 - 20:00<br />Saturday: 09:00 - 15:00</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form-container">
+          <form class="contact-form" id="medicalContactForm">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input
+                type="text"
+                placeholder="Enter your official name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Medical ID (Optional)</label>
+              <input type="text" placeholder="e.g. PAT-12345" />
+            </div>
+            <div class="form-group">
+              <label>Subject of Inquiry</label>
+              <select required>
+                <option value="">Select a department</option>
+                <option value="technical">Technical Support</option>
+                <option value="clinical">Clinical Question</option>
+                <option value="billing">Administrative/Billing</option>
+                <option value="partnership">Professional Partnership</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea
+                rows="5"
+                placeholder="Describe your inquiry in detail..."
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Submit Inquiry</button>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer class="service-footer">
+      <div class="footer-container">
+        <div class="nutritional-disclaimer">
+          <strong>Privacy Notice:</strong> All communications through this
+          portal are encrypted. We comply with international healthcare data
+          protection standards to ensure your medical inquiries remain
+          confidential.
+        </div>
+        <p class="footer-copyright">
+          HealthBridge Clinical Support &copy; 2026 | Secure Portal
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

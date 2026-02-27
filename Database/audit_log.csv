@@ -1,0 +1,9 @@
+Field,Type,Null,Key,Default,Extra
+log_id,int,NO,PRI,NULL,auto_increment
+action_type,varchar(50),YES,MUL,NULL,
+table_name,varchar(50),YES,MUL,NULL,
+record_id,varchar(100),YES,,NULL,
+old_values,json,YES,,NULL,
+new_values,json,YES,,NULL,
+performed_by,varchar(100),YES,,NULL,
+performed_at,timestamp,YES,MUL,CURRENT_TIMESTAMP,DEFAULT_GENERATED

@@ -1,0 +1,136 @@
+:root {
+  --drug-primary: #2563eb;
+  --drug-bg: #f8fafc;
+  --card-border: #e2e8f0;
+  --tag-bg: #dbeafe;
+  --tag-text: #1e40af;
+  --disclaimer-red: #9f1239;
+  --disclaimer-bg: #fff1f2;
+}
+
+/* Header & Search */
+.drugs-header {
+  background: #0f172a;
+  padding: 100px 5%;
+  color: white;
+  text-align: center;
+}
+
+.drugs-header h1 {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+}
+
+.search-bar-container {
+  max-width: 700px;
+  margin: 40px auto 0;
+}
+
+#drugSearch {
+  width: 100%;
+  padding: 18px 25px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.search-info {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+/* Grid Layout */
+.drugs-main {
+  max-width: 1300px;
+  margin: 60px auto;
+  padding: 0 30px;
+}
+
+.drugs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+/* Drug Card Design */
+.drug-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.drug-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+  border-color: var(--drug-primary);
+}
+
+.drug-name {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.tag {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.drug-desc {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #475569;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 15px;
+  margin-top: auto;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Disclaimer & Footer */
+.service-footer {
+  padding: 80px 5%;
+  background: #f1f5f9;
+  text-align: center;
+}
+
+.disclaimer-box {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 25px;
+  background: var(--disclaimer-bg);
+  border: 1px dashed #f43f5e;
+  border-radius: 12px;
+  color: var(--disclaimer-red);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.copyright {
+  margin-top: 30px;
+  color: #64748b;
+  font-size: 0.85rem;
+}

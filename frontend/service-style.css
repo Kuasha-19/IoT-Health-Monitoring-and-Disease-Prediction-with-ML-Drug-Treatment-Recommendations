@@ -1,0 +1,182 @@
+/* --- Global Service Variables --- */
+:root {
+  --service-bg: #f1f5f9;
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  --alert-red: #b91c1c;
+  --alert-bg: #fef2f2;
+}
+
+/* --- Layout --- */
+.service-main {
+  padding: 80px 0;
+  background-color: var(--service-bg);
+}
+
+.service-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.service-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.service-tag {
+  color: var(--primary);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  margin-bottom: 15px;
+}
+
+.service-header h1 {
+  font-size: 3rem;
+  color: var(--secondary);
+  margin-bottom: 15px;
+}
+
+/* --- Image Gallery Grid --- */
+.service-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-bottom: 60px;
+}
+
+.image-box {
+  height: 300px;
+  background: #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.image-box:hover img {
+  transform: scale(1.1);
+}
+
+/* --- Content Content Split --- */
+.service-content-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.assessment-card {
+  background: var(--white);
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+}
+
+.card-title {
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  color: var(--secondary);
+}
+
+.medical-description {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-light);
+  margin-bottom: 30px;
+}
+
+.metrics-list {
+  list-style: none;
+  margin-bottom: 40px;
+}
+
+.metrics-list li {
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+}
+
+.metrics-list li::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.btn-start-test {
+  width: 100%;
+  padding: 20px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: background 0.3s;
+}
+
+.btn-start-test:hover {
+  background: var(--primary-hover);
+}
+
+/* --- Sidebar Components --- */
+.warning-widget {
+  background: var(--alert-bg);
+  padding: 30px;
+  border-radius: 16px;
+  border-left: 6px solid var(--alert-red);
+  margin-bottom: 25px;
+}
+
+.warning-widget h3 {
+  color: var(--alert-red);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.status-widget {
+  background: var(--white);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+.status-widget h3 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.status-widget p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin: 5px 0;
+}
+
+/* --- Footer --- */
+.service-footer {
+  background: var(--secondary);
+  color: var(--white);
+  padding: 60px 0;
+  text-align: center;
+}
+
+.footer-content p {
+  opacity: 0.6;
+  margin: 10px 0;
+}

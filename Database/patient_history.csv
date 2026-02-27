@@ -1,0 +1,5 @@
+Field,Type,Null,Key,Default,Extra
+id,int,NO,PRI,NULL,auto_increment
+patient_id,varchar(50),NO,,NULL,
+prediction,varchar(50),NO,,NULL,
+date,datetime,YES,,CURRENT_TIMESTAMP,DEFAULT_GENERATED

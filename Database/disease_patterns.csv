@@ -1,0 +1,12 @@
+Field,Type,Null,Key,Default,Extra
+pattern_id,int,NO,PRI,NULL,auto_increment
+disease_name,varchar(100),YES,UNI,NULL,
+common_symptoms,json,YES,,NULL,
+avg_temperature_range,varchar(20),YES,,NULL,
+avg_heart_rate_range,varchar(20),YES,,NULL,
+avg_bp_range,varchar(20),YES,,NULL,
+seasonality,varchar(50),YES,,NULL,
+risk_factors,json,YES,,NULL,
+prevention_measures,json,YES,,NULL,
+total_cases,int,YES,,0,
+last_updated,timestamp,YES,,CURRENT_TIMESTAMP,"DEFAULT_GENERATED on update CURRENT_TIMESTAMP"

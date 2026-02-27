@@ -1,0 +1,16 @@
+Field,Type,Null,Key,Default,Extra
+patient_id,varchar(50),NO,PRI,NULL,
+first_name,varchar(100),YES,,NULL,
+last_name,varchar(100),YES,,NULL,
+age,int,YES,,NULL,
+gender,"enum('Male','Female','Other')",YES,,NULL,
+contact_number,varchar(20),YES,,NULL,
+email,varchar(100),YES,,NULL,
+created_at,timestamp,YES,,CURRENT_TIMESTAMP,DEFAULT_GENERATED
+last_visit,timestamp,YES,MUL,CURRENT_TIMESTAMP,"DEFAULT_GENERATED on update CURRENT_TIMESTAMP"
+total_visits,int,YES,MUL,0,
+address,text,YES,,NULL,
+emergency_contact,varchar(20),YES,,NULL,
+blood_group,varchar(5),YES,,NULL,
+allergies,text,YES,,NULL,
+medical_history,text,YES,,NULL,

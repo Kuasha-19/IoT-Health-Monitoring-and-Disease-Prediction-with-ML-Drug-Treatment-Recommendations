@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Analysis | Gastroenterology - Gastritis</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../style.css" />
+    <link rel="stylesheet" href="disease-page.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo" onclick="location.href = '../../index.html'">
+        <span>HealthBridge</span>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item"><a href="../../index.html">Home</a></li>
+        <li class="nav-item"><a href="../foods.html">Foods</a></li>
+        <li class="nav-item"><a href="../contact.html">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div class="disease-container">
+      <div class="image-slider">
+        <div class="slides" id="slider">
+          <img
+            src="7.webp"
+            class="slide active"
+            alt="Gastric Mucosa Analysis"
+          />
+          <img src="8.jpg" class="slide" alt="Endoscopic Imaging" />
+          <img src="9.jpg" class="slide" alt="Stomach Acid Regulation" />
+          <img src="10.jpg" class="slide" alt="Bacterial H. Pylori Study" />
+        </div>
+      </div>
+
+      <section class="medical-content">
+        <h1>Gastroenterology: Pathophysiology of Gastritis</h1>
+
+        <div class="info-block">
+          <h2>Definition and Clinical Presentation</h2>
+          <p>
+            Gastritis is defined as the histological identification of
+            inflammation within the gastric mucosa. It is not a single disease
+            but a process occurring when the protective mucosal barrier is
+            compromised, allowing hydrochloric acid and pepsin to cause
+            autodigestion of the stomach lining. Clinical manifestations often
+            include dyspepsia, postprandial fullness, and epigastric pain.
+          </p>
+        </div>
+
+        <div class="info-block">
+          <h2>Etiology and Classification</h2>
+          <p>
+            The condition is broadly classified into <strong>Acute</strong> and
+            <strong>Chronic</strong> forms. Acute gastritis often results from
+            erosive agents like NSAIDs or alcohol. Chronic gastritis is
+            frequently secondary to persistent infection by
+            <em>Helicobacter pylori</em>, which induces a chronic inflammatory
+            response, potentially leading to mucosal atrophy or intestinal
+            metaplasia.
+          </p>
+        </div>
+
+        <div class="info-block">
+          <h2>Types of Gastritis</h2>
+          <ul>
+            <li>
+              <strong>Erosive Gastritis:</strong> Characterized by mucosal
+              surface depletion and shallow ulcerations.
+            </li>
+            <li>
+              <strong>Non-erosive Gastritis:</strong> Primarily refers to
+              histological changes induced by H. pylori infection.
+            </li>
+            <li>
+              <strong>Atrophic Gastritis:</strong> Chronic inflammation leading
+              to the loss of glandular cells and intrinsic factor secretion.
+            </li>
+            <li>
+              <strong>Autoimmune Gastritis:</strong> An immune-mediated
+              destruction of parietal cells, often linked to Vitamin B12
+              deficiency.
+            </li>
+          </ul>
+        </div>
+
+        <hr />
+
+        <div class="prominent-features">
+          <h2>Clinical Dimensions and Advanced Pathophysiology</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <h3>1. H. Pylori Colonization</h3>
+              <p>
+                Urease production by bacteria neutralizes gastric acid, allowing
+                colonization of the antrum and triggering cytokine-mediated
+                inflammation.
+              </p>
+            </div>
+            <div class="feature-card">
+              <h3>2. Prostaglandin Inhibition</h3>
+              <p>
+                Analysis of how non-selective NSAIDs inhibit COX-1 enzymes,
+                reducing the synthesis of protective prostaglandins that
+                maintain blood flow.
+              </p>
+            </div>
+            <div class="feature-card">
+              <h3>3. Endoscopic Evaluation</h3>
+              <p>
+                Diagnostic utilization of Esophagogastroduodenoscopy (EGD) to
+                visualize erythema, friability, and mucosal regenerative
+                changes.
+              </p>
+            </div>
+            <div class="feature-card">
+              <h3>4. Hypochlorhydria Risks</h3>
+              <p>
+                Long-term implications of reduced acid secretion on the
+                microbiome and the potential for increased susceptibility to
+                enteric infections.
+              </p>
+            </div>
+            <div class="feature-card">
+              <h3>5. Histopathological Staging</h3>
+              <p>
+                The Sydney System for classification, evaluating the density of
+                neutrophils, mononuclear cells, and the presence of glandular
+                atrophy.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="info-block"
+          style="
+            margin-top: 50px;
+            background: #f1f5f9;
+            padding: 30px;
+            border-radius: 8px;
+          "
+        >
+          <h2 style="color: var(--secondary)">Advanced Medical Analysis</h2>
+          <p>
+            The progression from superficial inflammation to
+            <strong>gastric neoplasia</strong> follows the
+            <em>Correa Pathway</em>. This involves a transition from
+            non-atrophic gastritis to multifocal atrophic gastritis, followed by
+            intestinal metaplasia (complete or incomplete). Molecular markers
+            such as <strong>pepsinogen I/II ratios</strong> are clinically
+            significant in assessing the degree of mucosal damage. Furthermore,
+            the disruption of the
+            <strong>cyto-protective bicarbonate layer</strong> and the failure
+            of <strong>epithelial tight junctions</strong> represent the final
+            common pathway for erosive mucosal injury.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      // Automatic Image Slider Logic
+      let currentIndex = 0;
+      const slides = document.querySelectorAll(".slide");
+
+      function changeSlide() {
+        slides[currentIndex].classList.remove("active");
+        currentIndex = (currentIndex + 1) % slides.length;
+        slides[currentIndex].classList.add("active");
+      }
+
+      setInterval(changeSlide, 2000); // Changes every 2 seconds
+    </script>
+  </body>
+</html>
