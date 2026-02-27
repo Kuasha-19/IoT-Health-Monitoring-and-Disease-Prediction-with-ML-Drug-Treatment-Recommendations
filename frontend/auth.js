@@ -1,33 +1,48 @@
+/**
+ * HealthBridge | Auth Logic V4.1
+ * Corrected for Nordic Clinical Theme and Dual-Contact Logic
+ */
+
 let currentRole = 'patient';
 
 function setRole(role) {
     currentRole = role;
     document.querySelectorAll('.role-option').forEach(opt => opt.classList.remove('active'));
-    document.querySelector(`[data-role="${role}"]`).classList.add('active');
     
+    const selectedRole = document.querySelector(`[data-role="${role}"]`);
+    if (selectedRole) selectedRole.classList.add('active');
+    
+    // Toggle Department field visibility for doctors
     const deptField = document.getElementById('deptField');
     if (deptField) {
-        deptField.classList.toggle('hidden', role !== 'doctor');
+        // Only show if role is doctor AND we are in signup mode
+        const isSignup = document.getElementById('submitBtn').innerText === "Sign Up";
+        deptField.classList.toggle('hidden', role !== 'doctor' || !isSignup);
     }
 }
 
 function showMode(mode) {
     const isSignup = mode === 'signup';
+    
+    // UI Classes
     document.getElementById('toggleSignin').classList.toggle('active', !isSignup);
     document.getElementById('toggleSignup').classList.toggle('active', isSignup);
+    
+    // Text Updates
     document.getElementById('formTitle').innerText = isSignup ? "Create Account" : "Access Portal";
     document.getElementById('submitBtn').innerText = isSignup ? "Sign Up" : "Sign In";
     
-    // Toggle Visibility
-    document.getElementById('roleSelection').classList.toggle('hidden', !isSignup);
-    document.getElementById('nameField').classList.toggle('hidden', !isSignup);
-    document.getElementById('contactSection').classList.toggle('hidden', !isSignup);
-    document.getElementById('bloodGroupField').classList.toggle('hidden', !isSignup);
-    
-    if (isSignup && currentRole === 'doctor') {
-        document.getElementById('deptField').classList.remove('hidden');
-    } else {
-        document.getElementById('deptField').classList.add('hidden');
+    // Section Visibility
+    const toggleFields = ['roleSelection', 'nameField', 'contactSection', 'bloodGroupField'];
+    toggleFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', !isSignup);
+    });
+
+    // Special handling for Department Field
+    const deptField = document.getElementById('deptField');
+    if (deptField) {
+        deptField.classList.toggle('hidden', !isSignup || currentRole !== 'doctor');
     }
 }
 
@@ -35,27 +50,30 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const mode = document.getElementById('submitBtn').innerText;
     
-    const email = document.getElementById('userEmail').value.trim();
-    const phone = document.getElementById('userPhone').value.trim();
+    const emailInput = document.getElementById('userEmail');
+    const phoneInput = document.getElementById('userPhone');
+    
+    const email = emailInput ? emailInput.value.trim() : "";
+    const phone = phoneInput ? phoneInput.value.trim() : "";
 
-    // Frontend Validation: Must give at least one contact method
+    // Validation: Email OR Phone required for Sign Up
     if (mode === "Sign Up" && !email && !phone) {
-        alert("Please provide either an Email Address or a Phone Number.");
+        alert("Institutional records require either an Email Address or a Phone Number.");
         return;
     }
 
     const data = {
-        user_id: document.getElementById('userId').value,
-        name: document.getElementById('userName').value || "User",
+        user_id: document.getElementById('userId').value.trim(),
+        name: document.getElementById('userName').value.trim() || "User",
         email: email || null,
         phone: phone || null,
         role: currentRole,
-        password: "password123", 
-        dept: currentRole === 'doctor' ? document.getElementById('department').value : null,
+        password: "password123", // Static password as per your design
+        dept: currentRole === 'doctor' ? document.getElementById('department').value.trim() : null,
         blood_group: document.getElementById('bloodGroup').value || null
     };
 
-    const endpoint = mode === "Sign Up" ? "signup" : "login";
+    const endpoint = mode.trim().toLowerCase() === "sign up" ? "signup" : "login";
 
     try {
         const response = await fetch(`http://127.0.0.1:8000/api/${endpoint}`, {
@@ -65,15 +83,17 @@ document.getElementById('authForm').addEventListener('submit', async (e) => {
         });
 
         const result = await response.json();
+        
         if (response.ok) {
             localStorage.setItem('userId', result.user_id || data.user_id);
             localStorage.setItem('userName', result.name || data.name);
             localStorage.setItem('userRole', result.role || data.role);
             window.location.href = 'dashboard.html';
         } else {
-            alert(result.detail || "Action Failed");
+            // Display backend error detail (e.g., "Duplicate entry")
+            alert(result.detail || "Authentication Failure");
         }
     } catch (err) {
-        alert("Backend not responding. Please ensure uvicorn is running.");
+        alert("Node Communication Error: Ensure the FastAPI server is active.");
     }
 });

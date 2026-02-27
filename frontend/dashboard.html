@@ -23,7 +23,7 @@
 
       <div class="user-identity-card">
         <img
-          src="https://ui-avatars.com/api/?name=User&background=8686AC&color=fff"
+          src="https://ui-avatars.com/api/?background=8686AC&color=fff&bold=true"
           id="userAvatar"
           alt="Profile"
         />
@@ -34,24 +34,33 @@
       </div>
 
       <nav class="sidebar-nav">
-        <a href="#" class="nav-link active" onclick="showSection('overview')">
-          Overview
-        </a>
-
+        <!-- Patient links (visible only for patient) -->
         <div id="patientLinks">
-          <a href="pages/predictor.html" class="nav-link"> AI Predictor </a>
-          <a href="#" class="nav-link" onclick="showSection('reports')">
-            My Reports
-          </a>
+          <a href="#" class="nav-link" onclick="showSection('predictor')"
+            >AI Predictor</a
+          >
+          <a href="#" class="nav-link" onclick="showSection('reports')"
+            >My Reports</a
+          >
         </div>
 
+        <!-- Doctor links (visible only for doctor) -->
         <div id="doctorLinks" class="hidden">
-          <a href="#" class="nav-link" onclick="showSection('manage-patients')">
-            Patient Registry
-          </a>
+          <a href="#" class="nav-link" onclick="showSection('overview')"
+            >Overview</a
+          >
+          <a href="#" class="nav-link" onclick="showSection('manage-patients')"
+            >Patient Checkup</a
+          >
         </div>
 
-        <a href="index.html" class="nav-link logout"> Terminate Session </a>
+        <!-- Common logout -->
+        <a
+          href="index.html"
+          class="nav-link logout"
+          onclick="localStorage.clear()"
+          >Terminate Session</a
+        >
       </nav>
     </aside>
 
@@ -59,34 +68,55 @@
       <header class="top-bar">
         <div class="context-title">
           <span class="label-heading">Workspace</span>
-          <h2 id="sectionTitle">Overview</h2>
+          <h2 id="sectionTitle">AI Predictor</h2>
+          <!-- default title will be updated by JS -->
         </div>
-        <div class="role-badge" id="roleBadge">Patient</div>
+        <div class="role-badge" id="roleBadge">...</div>
       </header>
 
-      <section id="overview" class="content-section">
-        <div id="patientAdviceArea"></div>
-
-        <div class="welcome-terminal" id="welcomeBanner">
-          <div class="terminal-content">
-            <h3>SYSTEM_GREETING: <span id="welcomeName">User</span></h3>
-            <p>
-              Authentication successful. Accessing personalized health analytics
-              and risk progression markers.
-            </p>
-            <button
-              id="startCheckupBtn"
-              onclick="window.location.href = 'pages/predictor.html'"
-            >
-              Initialize Analysis
-            </button>
+      <!-- ========== OVERVIEW (only doctor sees this) ========== -->
+      <section id="overview" class="content-section hidden">
+        <div id="doctorStats" class="stats-grid hidden">
+          <div class="summary-card">
+            <span class="label-heading">Consultation Integrity</span>
+            <p>Total Registered: <span id="totalPatients">0</span></p>
+            <p>Total Checkups: <span id="totalChecks">0</span></p>
           </div>
+          <div class="summary-card">
+            <span class="label-heading">Messaging Status</span>
+            <p>Responded: <span id="respondedCount">0</span></p>
+            <p>Not Responded: <span id="pendingCount">0</span></p>
+          </div>
+        </div>
+
+        <div id="patientStats" class="stats-grid hidden">
+          <div class="summary-card">
+            <span class="label-heading">Current Status</span>
+            <div id="currentDiseaseRisk">
+              <p>Latest Disease: <span id="latestDisease">—</span></p>
+              <p>Risk: <span id="latestRisk">—</span>%</p>
+            </div>
+          </div>
+          <div class="summary-card">
+            <span class="label-heading">Disease Frequency</span>
+            <div id="diseaseRank" class="rank-list"></div>
+          </div>
+        </div>
+
+        <div
+          id="doctorPatientList"
+          class="patient-list-card hidden"
+          style="margin-top: 2rem"
+        >
+          <span class="label-heading">Patient Status Overview</span>
+          <h4>Latest Disease & Risk by Patient</h4>
+          <div id="patientListContainer" class="scrollable-list"></div>
         </div>
 
         <div class="chart-shell">
           <div class="shell-header">
-            <span class="label-heading">Analytics</span>
-            <h4>Neural Risk Probability Trend</h4>
+            <span class="label-heading">Neural Risk Trend</span>
+            <h4>Risk Probability Progression</h4>
           </div>
           <div class="canvas-wrapper">
             <canvas id="healthChart"></canvas>
@@ -94,14 +124,144 @@
         </div>
       </section>
 
+      <!-- ========== AI PREDICTOR ========== -->
+      <section id="predictor" class="content-section">
+        <div class="shell-header">
+          <span class="label-heading">AI Clinical Predictor</span>
+          <h4>Enter your current vitals & symptoms</h4>
+        </div>
+        <div class="predictor-form">
+          <form id="predictForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Temperature (°C)</label>
+                <input type="number" step="0.1" id="temperature" required />
+              </div>
+              <div class="form-group">
+                <label>Heart Rate (BPM)</label>
+                <input type="number" step="1" id="heart_rate" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>BP Systolic</label>
+                <input type="number" step="1" id="bp_sys" required />
+              </div>
+              <div class="form-group">
+                <label>BP Diastolic</label>
+                <input type="number" step="1" id="bp_dia" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Humidity (%)</label>
+                <input type="number" step="1" id="humidity" required />
+              </div>
+            </div>
+            <div class="form-row symptoms-group">
+              <label>Symptoms (0–10 scale):</label>
+              <div class="symptom-inputs">
+                <div>
+                  <label>Fever</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="1"
+                    id="fever"
+                    value="0"
+                  />
+                </div>
+                <div>
+                  <label>Cough</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="1"
+                    id="cough"
+                    value="0"
+                  />
+                </div>
+                <div>
+                  <label>Chest Pain</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="1"
+                    id="chest_pain"
+                    value="0"
+                  />
+                </div>
+                <div>
+                  <label>Shortness of Breath</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="1"
+                    id="shortness_breath"
+                    value="0"
+                  />
+                </div>
+                <div>
+                  <label>Fatigue</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="1"
+                    id="fatigue"
+                    value="0"
+                  />
+                </div>
+                <div>
+                  <label>Headache</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="1"
+                    id="headache"
+                    value="0"
+                  />
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn-send">Predict & Save</button>
+          </form>
+          <div id="predictionResult" class="instruction-terminal hidden">
+            <h4>Prediction Result</h4>
+            <p><strong>Disease:</strong> <span id="predDisease"></span></p>
+            <p><strong>Risk Score:</strong> <span id="predScore"></span>%</p>
+            <p>
+              <strong>Suggested Drugs:</strong> <span id="predDrugs"></span>
+            </p>
+            <p>
+              <strong>Suggested Foods:</strong> <span id="predFoods"></span>
+            </p>
+            <p><strong>Routine:</strong> <span id="predRoutine"></span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== MY REPORTS ========== -->
       <section id="reports" class="content-section hidden">
         <div class="shell-header">
-          <span class="label-heading">Records</span>
-          <h4>Diagnostic History</h4>
+          <span class="label-heading">Clinical Records</span>
+          <h4>Diagnostic History (Latest First)</h4>
         </div>
+
+        <div id="doctorMessageArea" class="instruction-terminal hidden">
+          <label class="label-heading">Message from Doctor</label>
+          <p id="feedbackText">No instructions yet.</p>
+        </div>
+
         <div id="patientReportList" class="report-grid"></div>
       </section>
 
+      <!-- ========== PATIENT CHECKUP (DOCTOR) ========== -->
       <section id="manage-patients" class="content-section hidden">
         <div class="split-viewport">
           <div class="analysis-panel" id="sideA">
@@ -109,35 +269,43 @@
               <input
                 type="text"
                 id="inputA"
-                placeholder="QUERY_PATIENT_A..."
+                placeholder="SEARCH_PATIENT_A..."
                 onkeyup="liveSearch('A')"
               />
             </div>
             <div id="listA" class="scrollable-registry"></div>
-
             <div id="dataA" class="panel-details hidden">
               <h4 id="nameA" class="patient-title">Patient A</h4>
-              <div class="metric-grid">
+              <div class="clinical-metric-grid">
                 <div class="graph-shell">
-                  <canvas id="chartA_risk"></canvas>
+                  <label>Temperature Trend</label
+                  ><canvas id="chartA_temp"></canvas>
                 </div>
-                <div class="graph-shell"><canvas id="chartA_hr"></canvas></div>
-                <div class="graph-shell"><canvas id="chartA_bp"></canvas></div>
+                <div class="graph-shell">
+                  <label>Blood Pressure</label><canvas id="chartA_bp"></canvas>
+                </div>
+                <div class="graph-shell">
+                  <label>Heart Rate</label><canvas id="chartA_hr"></canvas>
+                </div>
+                <div class="graph-shell">
+                  <label>Symptoms Count</label
+                  ><canvas id="chartA_symptoms"></canvas>
+                </div>
               </div>
-
+              <div class="clinical-history-vault">
+                <label class="label-heading"
+                  >Current Meds & Food (History)</label
+                >
+                <div id="historyA" class="history-scroll"></div>
+              </div>
               <div class="instruction-terminal">
                 <textarea
                   id="msgA"
-                  placeholder="Enter clinical instructions..."
+                  placeholder="Send message to patient..."
                 ></textarea>
-                <div class="terminal-actions">
-                  <button class="btn-send" onclick="sendAdvice('A')">
-                    Deploy Advice
-                  </button>
-                  <button class="btn-delete" onclick="deleteRecord('A')">
-                    Purge Data
-                  </button>
-                </div>
+                <button class="btn-send" onclick="sendAdvice('A')">
+                  Send Message
+                </button>
               </div>
             </div>
           </div>
@@ -147,35 +315,43 @@
               <input
                 type="text"
                 id="inputB"
-                placeholder="QUERY_PATIENT_B..."
+                placeholder="SEARCH_PATIENT_B..."
                 onkeyup="liveSearch('B')"
               />
             </div>
             <div id="listB" class="scrollable-registry"></div>
-
             <div id="dataB" class="panel-details hidden">
               <h4 id="nameB" class="patient-title">Patient B</h4>
-              <div class="metric-grid">
+              <div class="clinical-metric-grid">
                 <div class="graph-shell">
-                  <canvas id="chartB_risk"></canvas>
+                  <label>Temperature Trend</label
+                  ><canvas id="chartB_temp"></canvas>
                 </div>
-                <div class="graph-shell"><canvas id="chartB_hr"></canvas></div>
-                <div class="graph-shell"><canvas id="chartB_bp"></canvas></div>
+                <div class="graph-shell">
+                  <label>Blood Pressure</label><canvas id="chartB_bp"></canvas>
+                </div>
+                <div class="graph-shell">
+                  <label>Heart Rate</label><canvas id="chartB_hr"></canvas>
+                </div>
+                <div class="graph-shell">
+                  <label>Symptoms Count</label
+                  ><canvas id="chartB_symptoms"></canvas>
+                </div>
               </div>
-
+              <div class="clinical-history-vault">
+                <label class="label-heading"
+                  >Current Meds & Food (History)</label
+                >
+                <div id="historyB" class="history-scroll"></div>
+              </div>
               <div class="instruction-terminal">
                 <textarea
                   id="msgB"
-                  placeholder="Enter clinical instructions..."
+                  placeholder="Send message to patient..."
                 ></textarea>
-                <div class="terminal-actions">
-                  <button class="btn-send" onclick="sendAdvice('B')">
-                    Deploy Advice
-                  </button>
-                  <button class="btn-delete" onclick="deleteRecord('B')">
-                    Purge Data
-                  </button>
-                </div>
+                <button class="btn-send" onclick="sendAdvice('B')">
+                  Send Message
+                </button>
               </div>
             </div>
           </div>

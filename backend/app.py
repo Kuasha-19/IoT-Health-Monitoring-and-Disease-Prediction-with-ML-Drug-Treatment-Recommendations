@@ -50,8 +50,6 @@ class UserSignup(BaseModel):
     dept: Optional[str] = None
     blood_group: Optional[str] = None
 
-    # Use root_validator(skip_on_failure=True) for Pydantic V2 compatibility if needed, 
-    # but the logic below is correct for the standard setup.
     @root_validator(pre=True)
     def check_contact_info(cls, values):
         email = values.get('email')
@@ -159,7 +157,7 @@ def get_clinical_advice(disease, score):
     return advice
 
 # ------------------------------
-# 5. API Endpoints (No Changes)
+# 5. API Endpoints
 # ------------------------------
 
 @app.post("/api/signup")
@@ -167,22 +165,28 @@ async def signup(user: UserSignup):
     db = get_db()
     cursor = db.cursor()
     try:
-        if not user.email and not user.phone:
-            raise HTTPException(status_code=400, detail="At least one contact method (Email or Phone) is required.")
-
         sql = """INSERT INTO users 
-                 (id_str, name, email, phone, role, password_hash, dept, blood_group) 
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+         (id_str, name, email, phone, role, password_hash, dept, blood_group) 
+         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         
-        cursor.execute(sql, (user.user_id, user.name, user.email, user.phone, user.role, user.password, user.dept, user.blood_group))
+        cursor.execute(sql, (
+            user.user_id,
+            user.name, 
+            user.email,       
+            user.phone,       
+            user.role, 
+            user.password,
+            user.dept, 
+            user.blood_group
+        ))
+        
         db.commit()
-        return {"status": "success", "message": "Institutional account created successfully", "user_id": user.user_id}
+        return {"status": "success", "message": "Institutional account created successfully"}
     except Exception as e:
         db.rollback()
-        logger.error(f"Signup Database Error: {e}")
         if "Duplicate entry" in str(e):
-            raise HTTPException(status_code=400, detail="User ID, Email, or Phone already registered.")
-        raise HTTPException(status_code=500, detail="Internal Server Error during registration")
+            raise HTTPException(status_code=400, detail="Institutional ID already registered.")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         cursor.close()
         db.close()
@@ -192,19 +196,28 @@ async def login(data: dict):
     db = get_db()
     cursor = db.cursor(dictionary=True)
     try:
-        cursor.execute("SELECT * FROM users WHERE id_str=%s AND password_hash=%s", (data['user_id'], data['password']))
+        sql = "SELECT * FROM users WHERE id_str=%s AND password_hash=%s"
+        cursor.execute(sql, (data['user_id'], data['password']))
         user = cursor.fetchone()
-        if user: return user
-        raise HTTPException(status_code=404, detail="Invalid Credentials")
+        
+        if user:
+            return {
+                "user_id": user['id_str'],
+                "name": user['name'],
+                "role": user['role']
+            }
+        
+        raise HTTPException(status_code=401, detail="Invalid Institutional Credentials")
     finally:
         cursor.close()
         db.close()
-
+        
 @app.post("/api/predict")
 async def predict(input_data: HealthInput):
     db = get_db()
     cursor = db.cursor(dictionary=True)
     try:
+        # ML Prediction Logic
         raw_features = [
             input_data.temperature, input_data.heart_rate, input_data.bp_sys, 
             input_data.bp_dia, input_data.humidity, input_data.fever, 
@@ -214,11 +227,9 @@ async def predict(input_data: HealthInput):
         
         df = pd.DataFrame([raw_features], columns=feature_names)
         df[numerical_cols] = scaler.transform(df[numerical_cols])
-        
         proba = model.predict(df.values, verbose=0)
         disease = label_encoder.inverse_transform([np.argmax(proba)])[0]
         score = round(float(np.max(proba)) * 100, 2)
-        
         advice = get_clinical_advice(disease, score)
 
         cursor.execute("SELECT id FROM users WHERE id_str = %s", (input_data.user_id,))
@@ -226,10 +237,17 @@ async def predict(input_data: HealthInput):
         
         if u_record:
             sql = """INSERT INTO predictions (user_id, service_type, result_status, analysis_score, 
-                     suggested_drugs, suggested_foods, clinical_routine) 
-                     VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-            cursor.execute(sql, (u_record['id'], "AI Checkup", disease, score, 
-                                 advice['drugs'], advice['foods'], advice['routine']))
+                     temperature, heart_rate, bp_sys, bp_dia, humidity, fever, cough, chest_pain, 
+                     shortness_breath, fatigue, headache, suggested_drugs, suggested_foods, clinical_routine) 
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+            
+            cursor.execute(sql, (
+                u_record['id'], "AI Checkup", disease, score, 
+                input_data.temperature, input_data.heart_rate, input_data.bp_sys, input_data.bp_dia,
+                input_data.humidity, input_data.fever, input_data.cough, input_data.chest_pain, 
+                input_data.shortness_breath, input_data.fatigue, input_data.headache,
+                advice['drugs'], advice['foods'], advice['routine']
+            ))
             db.commit()
 
         return {"prediction": disease, "score": score, **advice}
@@ -238,18 +256,25 @@ async def predict(input_data: HealthInput):
         db.close()
 
 @app.get("/api/search-patient")
-async def search_patient(q: str):
+async def search_patient(q: str = ""):
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT id_str, name, role FROM users WHERE (name LIKE %s OR id_str LIKE %s) AND role='patient'", (f"%{q}%", f"%{q}%"))
+    if q:
+        cursor.execute("SELECT id_str, name, role FROM users WHERE (name LIKE %s OR id_str LIKE %s) AND role='patient'", (f"%{q}%", f"%{q}%"))
+    else:
+        cursor.execute("SELECT id_str, name, role FROM users WHERE role='patient'")
     return cursor.fetchall()
 
 @app.get("/api/reports/{user_id}")
 async def get_reports(user_id: str):
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("""SELECT p.* FROM predictions p JOIN users u ON p.user_id = u.id 
-                      WHERE u.id_str = %s ORDER BY p.created_at DESC""", (user_id,))
+    cursor.execute("""
+        SELECT p.* FROM predictions p 
+        JOIN users u ON p.user_id = u.id 
+        WHERE u.id_str = %s 
+        ORDER BY p.created_at DESC
+    """, (user_id,))
     return cursor.fetchall()
 
 @app.delete("/api/delete-patient/{patient_id}")
@@ -287,8 +312,18 @@ async def send_feedback(data: dict):
 async def get_feedback(patient_id: str):
     db = get_db()
     cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM doctor_feedback WHERE patient_id_str = %s ORDER BY prescribed_at DESC", (patient_id,))
-    return cursor.fetchall()
+    try:
+        cursor.execute("""
+            SELECT message, prescribed_at as created_at 
+            FROM doctor_feedback 
+            WHERE patient_id_str = %s 
+            ORDER BY prescribed_at DESC LIMIT 1
+        """, (patient_id,))
+        result = cursor.fetchone()
+        return result or {"message": "No clinical instructions deployed yet."}
+    finally:
+        cursor.close()
+        db.close()
    
 @app.post("/api/contact")
 async def save_contact_message(contact: ContactMessage):
@@ -310,6 +345,100 @@ async def save_contact_message(contact: ContactMessage):
         cursor.close()
         db.close()
 
+@app.get("/api/doctor-stats")
+async def get_doctor_stats():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        # ১. মোট নিবন্ধিত পেশেন্ট (role='patient')
+        cursor.execute("SELECT COUNT(*) as total_patients FROM users WHERE role = 'patient'")
+        total_patients = cursor.fetchone()['total_patients']
+
+        # ২. মোট চেকআপ সংখ্যা
+        cursor.execute("SELECT COUNT(*) as total_checks FROM predictions")
+        total_checks = cursor.fetchone()['total_checks']
+
+        # ৩. কতজন পেশেন্টকে অন্তত একবার মেসেজ দেওয়া হয়েছে
+        cursor.execute("SELECT COUNT(DISTINCT patient_id_str) as responded FROM doctor_feedback")
+        responded = cursor.fetchone()['responded']
+
+        # ৪. যারা কোনো মেসেজ পাননি = total_patients - responded
+        pending = total_patients - responded
+
+        return {
+            "total_patients": total_patients,
+            "total_checks": total_checks,
+            "responded": responded,
+            "pending": pending
+        }
+    finally:
+        cursor.close()
+        db.close()
+
+@app.get("/api/doctor-patient-list")
+async def get_doctor_patient_list():
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT id_str, name FROM users WHERE role = 'patient'")
+        patients = cursor.fetchall()
+
+        result = []
+        for p in patients:
+            cursor.execute("""
+                SELECT result_status, analysis_score, created_at
+                FROM predictions p
+                JOIN users u ON p.user_id = u.id
+                WHERE u.id_str = %s
+                ORDER BY p.created_at DESC
+                LIMIT 1
+            """, (p['id_str'],))
+            latest = cursor.fetchone()
+            if latest:
+                result.append({
+                    "id_str": p['id_str'],
+                    "name": p['name'],
+                    "latest_disease": latest['result_status'],
+                    "latest_risk": latest['analysis_score'],
+                    "latest_date": latest['created_at'].isoformat() if latest['created_at'] else None
+                })
+            else:
+                result.append({
+                    "id_str": p['id_str'],
+                    "name": p['name'],
+                    "latest_disease": "No checkup yet",
+                    "latest_risk": None,
+                    "latest_date": None
+                })
+        return result
+    finally:
+        cursor.close()
+        db.close()
+        
+@app.get("/api/patient-stats/{user_id}")
+async def get_patient_stats(user_id: str):
+    db = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        sql = """
+            SELECT result_status as disease, COUNT(*) as count 
+            FROM predictions p 
+            JOIN users u ON p.user_id = u.id 
+            WHERE u.id_str = %s 
+            GROUP BY result_status 
+            ORDER BY count DESC
+        """
+        cursor.execute(sql, (user_id,))
+        stats = cursor.fetchall()
+        
+        cursor.execute("SELECT COUNT(*) as total FROM predictions p JOIN users u ON p.user_id = u.id WHERE u.id_str = %s", (user_id,))
+        total = cursor.fetchone()['total']
+        
+        return {"total_visits": total, "disease_distribution": stats}
+    finally:
+        cursor.close()
+        db.close()
+        
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
