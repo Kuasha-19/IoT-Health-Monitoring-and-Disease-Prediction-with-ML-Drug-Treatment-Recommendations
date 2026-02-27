@@ -4,7 +4,7 @@ import pandas as pd
 import mysql.connector
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, field_validator, model_validator, root_validator
 from typing import Optional, List, Dict
 from datetime import datetime
 from pathlib import Path
@@ -26,20 +26,39 @@ app.add_middleware(
 # ------------------------------
 # 1. Pydantic Models
 # ------------------------------
-class ContactInquiry(BaseModel):
+class ContactMessage(BaseModel):
     full_name: str
     medical_id: Optional[str] = None
-    email: str
-    phone: str
-    subject: str
-    message: str
+    email: Optional[EmailStr] = None 
+    phone: Optional[str] = None
+    subject: Optional[str] = None
+    message: Optional[str] = None
+
+    @model_validator(mode='after')
+    def validate_communication_method(self) -> 'ContactMessage':
+        if not self.email and not self.phone:
+            raise ValueError('Institutional records require either an Email or Phone Number for communication.')
+        return self
 
 class UserSignup(BaseModel):
     user_id: str
     name: str
-    email: str
+    email: Optional[str] = None
+    phone: Optional[str] = None
     role: str
     password: str
+    dept: Optional[str] = None
+    blood_group: Optional[str] = None
+
+    # Use root_validator(skip_on_failure=True) for Pydantic V2 compatibility if needed, 
+    # but the logic below is correct for the standard setup.
+    @root_validator(pre=True)
+    def check_contact_info(cls, values):
+        email = values.get('email')
+        phone = values.get('phone')
+        if not email and not phone:
+            raise ValueError('Either email or phone must be provided')
+        return values
 
 class HealthInput(BaseModel):
     user_id: str
@@ -87,12 +106,11 @@ def get_db():
     )
 
 # ------------------------------
-# 4. Clinical Advice Logic (Drugs & Foods)
+# 4. Clinical Advice Logic (No Changes)
 # ------------------------------
 def get_clinical_advice(disease, score):
     advice = {"drugs": "Consult Doctor", "foods": "Balanced Diet", "routine": "Rest"}
     
-    # Heart Risk Logic
     if disease == "Heart_Risk":
         if 60 <= score < 80:
             advice = {
@@ -106,8 +124,6 @@ def get_clinical_advice(disease, score):
                 "foods": "Strict heart-healthy diet, Fatty fish, Zero added salt",
                 "routine": "Immediate cardiology consultation. Complete bed rest"
             }
-    
-    # Fever Respiratory Logic
     elif disease == "Fever_Respiratory":
         if score < 80:
             advice = {
@@ -121,8 +137,6 @@ def get_clinical_advice(disease, score):
                 "foods": "High-protein soft diet, ORS, Honey-lemon water",
                 "routine": "Strict isolation. Monitor SpO2 levels"
             }
-
-    # Hypertension Logic
     elif disease == "Hypertension":
         if 60 <= score < 80:
             advice = {
@@ -136,19 +150,16 @@ def get_clinical_advice(disease, score):
                 "foods": "Beetroot juice, Pomegranate. Zero added salt",
                 "routine": "Stress management (Yoga). Regular BP monitoring"
             }
-
-    # Hypotension Logic
     elif disease == "Hypotension":
         advice = {
             "drugs": "ORS (1L throughout day); Vitamin B12 supplements",
             "foods": "Cheese, Olives, Salty snacks (moderate), and Coffee",
             "routine": "Elevate legs while resting. Avoid sudden movements"
         }
-        
     return advice
 
 # ------------------------------
-# 5. API Endpoints
+# 5. API Endpoints (No Changes)
 # ------------------------------
 
 @app.post("/api/signup")
@@ -156,24 +167,22 @@ async def signup(user: UserSignup):
     db = get_db()
     cursor = db.cursor()
     try:
-        sql = """INSERT INTO users (id, id_str, name, email, role, password_hash) 
-                 VALUES (%s, %s, %s, %s, %s, %s)"""
+        if not user.email and not user.phone:
+            raise HTTPException(status_code=400, detail="At least one contact method (Email or Phone) is required.")
+
+        sql = """INSERT INTO users 
+                 (id_str, name, email, phone, role, password_hash, dept, blood_group) 
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         
-        cursor.execute(sql, (
-            user.user_id,   # id (Primary Key)
-            user.user_id,   # id_str (Unique Key)
-            user.name, 
-            user.email, 
-            user.role, 
-            user.password
-        ))
-        
+        cursor.execute(sql, (user.user_id, user.name, user.email, user.phone, user.role, user.password, user.dept, user.blood_group))
         db.commit()
-        return {"status": "success", "message": "Account created successfully"}
+        return {"status": "success", "message": "Institutional account created successfully", "user_id": user.user_id}
     except Exception as e:
         db.rollback()
-        logger.error(f"Signup Error: {e}")
-        raise HTTPException(status_code=400, detail="User ID or Email already exists")
+        logger.error(f"Signup Database Error: {e}")
+        if "Duplicate entry" in str(e):
+            raise HTTPException(status_code=400, detail="User ID, Email, or Phone already registered.")
+        raise HTTPException(status_code=500, detail="Internal Server Error during registration")
     finally:
         cursor.close()
         db.close()
@@ -249,7 +258,7 @@ async def delete_patient(patient_id: str):
     cursor = db.cursor()
     try:
         cursor.execute("DELETE FROM predictions WHERE user_id = (SELECT id FROM users WHERE id_str = %s)", (patient_id,))
-        cursor.execute("DELETE FROM doctor_feedback WHERE patient_id = %s", (patient_id,))
+        cursor.execute("DELETE FROM doctor_feedback WHERE patient_id_str = %s", (patient_id,))
         cursor.execute("DELETE FROM users WHERE id_str = %s", (patient_id,))
         db.commit()
         return {"status": "success", "message": "Patient records fully removed"}
@@ -282,24 +291,24 @@ async def get_feedback(patient_id: str):
     return cursor.fetchall()
    
 @app.post("/api/contact")
-async def handle_contact(data: ContactInquiry):
-    db = None
+async def save_contact_message(contact: ContactMessage):
+    db = get_db()
+    cursor = db.cursor()
     try:
-        db = get_db()
-        cursor = db.cursor()
-        sql = """INSERT INTO contact_messages (full_name, medical_id, email, phone, subject, message) 
+        sql = """INSERT INTO contact_messages 
+                 (full_name, medical_id, email, phone, subject, message) 
                  VALUES (%s, %s, %s, %s, %s, %s)"""
-        values = (data.full_name, data.medical_id, data.email, data.phone, data.subject, data.message)
-        cursor.execute(sql, values)
+        
+        cursor.execute(sql, (contact.full_name, contact.medical_id, contact.email, contact.phone, contact.subject, contact.message))
         db.commit()
-        return {"status": "success", "message": "Inquiry saved successfully"}
+        return {"status": "success", "message": "Inquiry transmitted successfully."}
     except Exception as e:
-        logger.error(f"Contact Form Error: {e}")
-        raise HTTPException(status_code=500, detail="Database connection failed")
+        db.rollback()
+        logger.error(f"Contact Submission Error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error. Transmission failed.")
     finally:
-        if db:
-            cursor.close()
-            db.close()
+        cursor.close()
+        db.close()
 
 if __name__ == "__main__":
     import uvicorn

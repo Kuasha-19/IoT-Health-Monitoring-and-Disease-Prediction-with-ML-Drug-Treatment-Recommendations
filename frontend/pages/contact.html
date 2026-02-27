@@ -165,35 +165,61 @@
     </footer>
 
     <script src="../script.js"></script>
+    <script src="../script.js"></script>
     <script>
+      // 1. Path Adjustment: Remove 'required' from individual fields
+      // to allow your "At least one contact method" logic to work.
+      document.getElementById("email").removeAttribute("required");
+      document.getElementById("phone").removeAttribute("required");
+
       document
         .getElementById("medicalContactForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
+
+          const email = document.getElementById("email").value.trim();
+          const phone = document.getElementById("phone").value.trim();
+
+          // 2. Frontend Validation: Ensure at least one contact method is provided
+          if (!email && !phone) {
+            alert(
+              "Institutional records require either an Email or Phone Number for communication.",
+            );
+            return;
+          }
+
           const formData = {
             full_name: document.getElementById("full_name").value,
-            medical_id: document.getElementById("medical_id").value,
-            email: document.getElementById("email").value,
-            phone: document.getElementById("phone").value,
+            medical_id: document.getElementById("medical_id").value || null,
+            email: email || null,
+            phone: phone || null,
             subject: document.getElementById("subject").value,
             message: document.getElementById("message").value,
           };
 
           try {
-            const response = await fetch("http://127.0.0.1:8000/contact", {
+            // 3. URL FIX: Added /api/ to match your FastAPI route
+            const response = await fetch("http://127.0.0.1:8000/api/contact", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(formData),
             });
 
             if (response.ok) {
-              alert("Your inquiry has been submitted to the database.");
+              alert(
+                "Inquiry successfully transmitted to the clinical database.",
+              );
               e.target.reset();
             } else {
-              alert("Failed to save message.");
+              const errorData = await response.json();
+              alert(
+                "Submission Failed: " + (errorData.detail || "Server Error"),
+              );
             }
           } catch (error) {
-            alert("Backend Server (FastAPI) is not running.");
+            alert(
+              "Network Error: Ensure your FastAPI backend is running on port 8000.",
+            );
           }
         });
     </script>

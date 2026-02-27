@@ -34,14 +34,19 @@ body {
   border-bottom: 2px solid var(--steel);
 }
 
+/* --- Fix for Invisible 'Health' Text --- */
 .logo {
   cursor: pointer;
   font-size: 1.8rem;
   font-weight: 800;
   letter-spacing: -1px;
+  /* Change this color to white to make 'Health' visible */
+  color: #ffffff !important;
 }
+
 .logo span {
-  color: var(--lavender);
+  /* This keeps 'Bridge' in your aesthetic lavender color */
+  color: #8686ac;
 }
 
 .nav-links {
