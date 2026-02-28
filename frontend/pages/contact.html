@@ -14,7 +14,7 @@
   <body>
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../index.html'">
-        Health<span>Bridge</span>
+        <span class="logo-hb">HB</span> Health<span>Bridge</span>
       </div>
 
       <ul class="nav-links">
@@ -47,14 +47,19 @@
     </nav>
 
     <header class="contact-header">
-      <div class="hero-tag">Clinical Support</div>
-      <h1>Connect With <span>Medical Support.</span></h1>
-      <p>
-        Our administration and technical teams are available for your inquiries.
-      </p>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-tag">Clinical Support</span>
+        <h1>Connect With <span>Medical Support.</span></h1>
+        <p>
+          Our administration and technical teams are available for your
+          inquiries.
+        </p>
+      </div>
     </header>
 
     <main class="contact-container">
+      <!-- Original contact card (form + sidebar) - unchanged structure -->
       <div class="contact-card">
         <div class="contact-form-section">
           <form id="medicalContactForm">
@@ -128,6 +133,101 @@
           </div>
         </div>
       </div>
+
+      <!-- New Section: Direct Contact Information -->
+      <section class="contact-direct">
+        <h2>Direct Contact Channels</h2>
+        <div class="direct-grid">
+          <div class="direct-item">
+            <h3>Main Switchboard</h3>
+            <p>+880 1234 567890</p>
+            <p class="direct-note">
+              Available 24/7 for urgent clinical inquiries
+            </p>
+          </div>
+          <div class="direct-item">
+            <h3>Email Support</h3>
+            <p>support@healthbridge.com</p>
+            <p class="direct-note">Response within 24 hours on business days</p>
+          </div>
+          <div class="direct-item">
+            <h3>Technical Assistance</h3>
+            <p>tech@healthbridge.com</p>
+            <p class="direct-note">For issues with the portal or AI modules</p>
+          </div>
+          <div class="direct-item">
+            <h3>Office Hours</h3>
+            <p>Open 24 Hours</p>
+            <p class="direct-note">Available every day for clinical support</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- New Section: Frequently Asked Questions (Accordion) -->
+      <section class="contact-faq">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question">
+              How do I access my clinical records?
+            </button>
+            <div class="faq-answer">
+              <p>
+                Registered patients can access their records through the patient
+                portal. If you need assistance, please contact technical
+                support.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question">
+              Is the AI diagnostic service covered by insurance?
+            </button>
+            <div class="faq-answer">
+              <p>
+                Coverage varies by provider. We recommend checking with your
+                insurance company before using the service.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question">
+              How can I refer a patient to HealthBridge?
+            </button>
+            <div class="faq-answer">
+              <p>
+                Physicians can use the referral form in the clinical portal or
+                contact our admissions office directly.
+              </p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question">
+              What should I do in case of a technical issue with the website?
+            </button>
+            <div class="faq-answer">
+              <p>
+                Please email tech@healthbridge.com with a detailed description
+                and screenshots if possible.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- New Section: Location (Map Placeholder) -->
+      <section class="contact-map">
+        <h2>Our Location</h2>
+        <div class="map-placeholder">
+          <img
+            src="https://images.unsplash.com/photo-1577415124269-fc1140a69e91?auto=format&fit=crop&w=1200&q=80"
+            alt="Medical district"
+          />
+          <div class="map-overlay">
+            <p>123 Medical Plaza, Health District, Dhaka</p>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
@@ -165,7 +265,7 @@
     </footer>
 
     <script src="../script.js"></script>
-    <script src="../script.js"></script>
+
     <script>
       // 1. Path Adjustment: Remove 'required' from individual fields
       // to allow your "At least one contact method" logic to work.
@@ -222,6 +322,14 @@
             );
           }
         });
+
+      // Simple FAQ accordion
+      document.querySelectorAll(".faq-question").forEach((button) => {
+        button.addEventListener("click", () => {
+          const faqItem = button.parentElement;
+          faqItem.classList.toggle("active");
+        });
+      });
     </script>
   </body>
 </html>

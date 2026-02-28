@@ -1,53 +1,148 @@
+/* contact-style.css - Medical white theme with dark navbar/footer */
+/* Updated with a neutral, professional color scheme (no bright blue) */
+
 :root {
-  --midnight: #0f0e47;
-  --lavender: #8686ac;
-  --bg-light: #f0f4f8; /* Light, beautiful background */
-  --white: #ffffff;
-  --border: #e2e8f0;
+  --pure-white: #ffffff;
+  --background-light: #f8fafc;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --accent-professional: #2c3e50; /* Deep slate - replaces bright blue */
+  --accent-soft: #5f6b7a; /* Muted gray-blue */
+  --border-light: #e2e8f0;
+  --hover-bg: #f1f5f9;
+  --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+
+  /* Dark navbar/footer (unchanged) */
+  --nav-bg: #0b202f;
+  --nav-text: #e0eefb;
+  --dropdown-border: #2b4b65;
+
+  --transition: all 0.3s ease;
 }
 
 body {
-  background-color: var(--bg-light);
-  color: var(--midnight);
+  background-color: var(--pure-white);
+  color: var(--text-primary);
+  font-family: "Inter", sans-serif;
+  margin: 0;
+  line-height: 1.6;
 }
 
+/* Navbar (dark) - matches main style */
+.navbar {
+  background: var(--nav-bg) !important;
+  border-bottom: 2px solid var(--dropdown-border);
+}
+
+.logo {
+  color: var(--nav-text) !important;
+}
+.logo-hb {
+  /* Use the professional accent color instead of dark blue to make it pop */
+  background: var(--accent-professional) !important;
+  color: white !important;
+  padding: 6px 12px;
+  border-radius: 10px;
+  margin-right: 8px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  display: inline-block;
+  /* Added a subtle border for extra definition against dark backgrounds */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.logo span {
+  color: var(--accent-professional);
+}
+
+/* --- Contact Header (with overlay) --- */
 .contact-header {
-  background: var(--midnight);
-  color: var(--white);
-  padding: 80px 8%;
+  position: relative;
+  background: url("https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1600&q=80")
+    center/cover no-repeat;
+  /* Increased bottom padding to create more visual 'breath' */
+  padding: 120px 8% 140px;
   text-align: center;
+  color: white;
 }
 
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(11, 32, 47, 0.85), rgba(11, 32, 47, 0.5));
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-tag {
+  display: inline-block;
+  background: var(--accent-professional);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 40px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 25px;
+}
+
+.contact-header h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: white;
+  line-height: 1.2;
+  word-break: break-word;
+}
 .contact-header h1 span {
-  color: var(--lavender);
+  color: var(--accent-soft);
 }
 .contact-header p {
-  color: var(--lavender);
-  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
+/* --- Main Container --- */
 .contact-container {
   max-width: 1100px;
-  margin: -40px auto 100px;
+  /* Increased top margin to -20px or 20px depending on overlap preference */
+  /* If you want more space between the image and the card, use 40px */
+  margin: 40px auto 100px;
   padding: 0 20px;
+  position: relative;
+  z-index: 5;
 }
 
+/* Original contact card (enhanced styling) */
 .contact-card {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  background: var(--white);
-  border-radius: 8px;
-  box-shadow: 0 15px 35px rgba(15, 14, 71, 0.1);
+  background: var(--pure-white);
+  border-radius: 24px;
+  box-shadow: var(--card-shadow);
   overflow: hidden;
+  border: 1px solid var(--border-light);
+  margin-bottom: 60px;
 }
 
 .contact-form-section {
   padding: 50px;
 }
 .contact-sidebar {
-  background: #f9fbff;
+  background: var(--background-light);
   padding: 50px;
-  border-left: 1px solid var(--border);
+  border-left: 1px solid var(--border-light);
 }
 
 .form-row {
@@ -65,54 +160,278 @@ body {
   font-weight: 700;
   font-size: 0.85rem;
   margin-bottom: 8px;
-  color: var(--midnight);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: #fff;
+  padding: 14px 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  background: var(--pure-white);
   font-size: 0.95rem;
+  color: var(--text-primary);
+  transition: var(--transition);
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-professional);
+  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
 }
 
 .btn-submit {
-  background: var(--midnight);
-  color: var(--white);
-  padding: 15px 30px;
+  background: var(--accent-professional);
+  color: white;
+  padding: 16px 30px;
   border: none;
-  border-radius: 4px;
-  font-weight: 800;
+  border-radius: 40px;
+  font-weight: 700;
   cursor: pointer;
   width: 100%;
   text-transform: uppercase;
-  transition: 0.3s;
+  letter-spacing: 1px;
+  transition: var(--transition);
+  font-size: 1rem;
 }
 
 .btn-submit:hover {
-  background: #1a1a5e;
+  background: #1a2b3a; /* darker shade */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-item {
   margin-bottom: 35px;
 }
 .sidebar-item h3 {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  color: var(--midnight);
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  font-weight: 700;
 }
 .sidebar-item p {
-  font-size: 0.9rem;
-  color: #64748b;
-  line-height: 1.6;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
 }
 
-/* Footer same as index.html styling */
+/* New Sections */
+.contact-direct,
+.contact-faq,
+.contact-map {
+  margin: 60px 0;
+}
+
+.contact-direct h2,
+.contact-faq h2,
+.contact-map h2 {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin-bottom: 30px;
+  word-break: break-word;
+}
+
+.direct-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+}
+
+.direct-item {
+  background: var(--pure-white);
+  padding: 30px;
+  border-radius: 24px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s;
+}
+
+.direct-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-professional);
+}
+
+.direct-item h3 {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.direct-item p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  word-break: break-word;
+}
+
+.direct-note {
+  font-size: 0.85rem !important;
+  font-weight: normal !important;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+/* FAQ Accordion */
+.faq-list {
+  border: 1px solid var(--border-light);
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--pure-white);
+  box-shadow: var(--card-shadow);
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border-light);
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question {
+  width: 100%;
+  text-align: left;
+  padding: 20px 25px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.faq-question:hover {
+  background: var(--hover-bg);
+}
+
+.faq-question::after {
+  content: "+";
+  position: absolute;
+  right: 25px;
+  font-size: 1.5rem;
+  color: var(--accent-professional);
+  transition: transform 0.3s;
+}
+
+.faq-item.active .faq-question::after {
+  content: "−";
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  background: var(--background-light);
+  padding: 0 25px;
+}
+
+.faq-item.active .faq-answer {
+  max-height: 300px; /* increased to accommodate longer answers */
+  padding: 0 25px 20px;
+}
+
+.faq-answer p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Map Placeholder */
+.map-placeholder {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-light);
+  height: 350px;
+}
+
+.map-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(transparent, rgba(11, 32, 47, 0.8));
+  color: white;
+  padding: 30px 25px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.map-overlay p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+  word-break: break-word;
+}
+
+/* Footer (dark) */
 .footer {
-  background: var(--midnight);
+  background: var(--nav-bg) !important;
+  color: var(--nav-text);
+  border-top: 2px solid var(--dropdown-border);
   padding: 80px 8% 40px;
   margin-top: 0;
+}
+
+.footer-section h2,
+.footer-section h3 {
+  color: white;
+}
+.footer-section h2 span {
+  color: var(--accent-professional);
+}
+.footer-section p,
+.footer-section a {
+  color: #cbd5e1;
+}
+.footer-section a:hover {
+  color: white;
+}
+.footer-bottom {
+  border-top-color: var(--dropdown-border);
+  color: #8fa3b8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-header h1 {
+    font-size: 2.5rem;
+  }
+  .contact-card {
+    grid-template-columns: 1fr;
+  }
+  .contact-sidebar {
+    border-left: none;
+    border-top: 1px solid var(--border-light);
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .direct-grid {
+    grid-template-columns: 1fr;
+  }
+  .faq-question {
+    font-size: 1rem;
+    padding: 15px 20px;
+  }
+  .faq-answer p {
+    font-size: 0.95rem;
+  }
 }

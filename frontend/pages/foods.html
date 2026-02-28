@@ -14,7 +14,7 @@
   <body>
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../index.html'">
-        Health<span>Bridge</span>
+        <span class="logo-hb">HB</span> Health<span>Bridge</span>
       </div>
       <ul class="nav-links">
         <li class="nav-item mega-dropdown">
@@ -35,16 +35,35 @@
     </nav>
 
     <header class="foods-hero">
-      <div class="hero-tag">Clinical Nutrition</div>
-      <h1>Nature's <span>Pharmacy.</span></h1>
-      <p>
-        A data-driven database of bioactive compounds to prevent and manage
-        chronic clinical conditions.
-      </p>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-tag">Clinical Nutrition</span>
+        <h1>Nature's <span>Pharmacy.</span></h1>
+        <p>
+          A data‑driven database of bioactive compounds to prevent and manage
+          chronic clinical conditions.
+        </p>
+      </div>
     </header>
+
+    <!-- New Section: Nutritional Philosophy -->
+    <section class="nutrition-intro">
+      <div class="intro-container">
+        <h2>The Science of Food as Medicine</h2>
+        <p>
+          Whole foods contain thousands of bioactive compounds that work
+          synergistically to support health. Unlike isolated supplements, these
+          naturally occurring molecules often have higher bioavailability and
+          fewer side effects. The foods listed below are supported by clinical
+          research for their role in preventing and managing specific
+          conditions.
+        </p>
+      </div>
+    </section>
 
     <main class="foods-container">
       <div class="foods-grid">
+        <!-- Original 15 food cards (unchanged content) -->
         <div class="food-card">
           <div class="food-image-wrapper">
             <span class="nutrient-badge">Allicin</span>
@@ -75,10 +94,10 @@
             <h2>Turmeric Root</h2>
             <p>
               Contains Curcumin, a powerful polyphenol. Curcumin fights systemic
-              inflammation at the molecular level by blocking NF-kB, a protein
+              inflammation at the molecular level by blocking NF‑kB, a protein
               molecule that travels into the nuclei of cells and turns on genes
               related to inflammation. It is highly effective in managing
-              arthritis symptoms and reducing post-exercise muscle soreness.
+              arthritis symptoms and reducing post‑exercise muscle soreness.
             </p>
             <div class="medical-target">
               Clinical Target: <span>Arthritis and Chronic Inflammation</span>
@@ -94,8 +113,8 @@
           <div class="food-content">
             <h2>Leafy Spinach</h2>
             <p>
-              Loaded with non-heme iron for hemoglobin production and
-              bone-strengthening calcium. It is rich in glycolipids, which help
+              Loaded with non‑heme iron for hemoglobin production and
+              bone‑strengthening calcium. It is rich in glycolipids, which help
               prevent cancer cell proliferation. Its high antioxidant content
               (lutein and zeaxanthin) is critical for protecting the eyes from
               oxidative stress, maintaining bone mineral density, and promoting
@@ -115,8 +134,8 @@
           <div class="food-content">
             <h2>Fatty Fish (Salmon)</h2>
             <p>
-              A premier source of Omega-3 fatty acids (EPA and DHA). These are
-              essential for neuro-protection and brain function. Clinically,
+              A premier source of Omega‑3 fatty acids (EPA and DHA). These are
+              essential for neuro‑protection and brain function. Clinically,
               they reduce the risk of arrhythmias, lower triglycerides, and slow
               the growth of atherosclerotic plaques, making salmon a critical
               food for managing cardiac health and preventing cognitive decline.
@@ -138,7 +157,7 @@
               Loaded with high concentrations of anthocyanins, which give them
               their color. These antioxidants have neuroprotective effects,
               directly improving the communication between brain cells and
-              slowing down age-related memory decline. Clinically, they help
+              slowing down age‑related memory decline. Clinically, they help
               reduce the risk of DNA damage, which is a key driver of various
               types of cancer.
             </p>
@@ -157,7 +176,7 @@
           <div class="food-content">
             <h2>Broccoli</h2>
             <p>
-              A potent source of Sulforaphane, a sulfur-rich compound that is
+              A potent source of Sulforaphane, a sulfur‑rich compound that is
               activated when broccoli is chewed. It helps neutralize carcinogens
               and reduce inflammation by inhibiting the production of enzymes
               that damage joints. It supports immune function and contains
@@ -180,7 +199,7 @@
             <p>
               The primary bioactive compound, Gingerol, is responsible for much
               of its medicinal properties. Gingerol has powerful
-              anti-inflammatory and antioxidant effects. Clinically, it speeds
+              anti‑inflammatory and antioxidant effects. Clinically, it speeds
               up stomach emptying, which is highly beneficial for patients with
               indigestion and promotes the restoration of the stomach lining in
               cases of gastritis.
@@ -201,7 +220,7 @@
             <p>
               Walnuts have a significantly higher antioxidant content than any
               other common nut. They provide healthy fats, including
-              alpha-linolenic acid (ALA), an Omega-3. Polyphenols found in
+              alpha‑linolenic acid (ALA), an Omega‑3. Polyphenols found in
               walnuts help lower LDL (bad) cholesterol levels. Clinically,
               regular consumption can reduce oxidative stress and inflammation,
               supporting overall brain health and preventing vascular disorders.
@@ -221,7 +240,7 @@
             <h2>Whole Oats</h2>
             <p>
               Whole oats contain a specific type of soluble fiber called
-              Beta-Glucan. When digested, Beta-Glucan forms a thick gel in the
+              Beta‑Glucan. When digested, Beta‑Glucan forms a thick gel in the
               gut, which helps reduce levels of bad cholesterol and stabilizes
               blood sugar. Clinically, they improve insulin response and promote
               satiety, making them crucial for managing diabetes and aiding in
@@ -327,7 +346,7 @@
           <div class="food-content">
             <h2>Sweet Potatoes</h2>
             <p>
-              Sweet Potatoes get their color from Beta-Carotene, an antioxidant
+              Sweet Potatoes get their color from Beta‑Carotene, an antioxidant
               that is converted into Vitamin A in the body. Vitamin A is
               critical for vision, bone health, and maintaining the immune
               system. Clinically, they provide a steady release of energy and
@@ -361,6 +380,86 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- New Section: Nutritional Guidelines -->
+      <section class="nutrition-guidelines">
+        <h2>Integrating Functional Foods into Clinical Practice</h2>
+        <div class="guidelines-grid">
+          <div class="guideline-item">
+            <h3>Bioavailability Considerations</h3>
+            <p>
+              Pairing fat‑soluble compounds (curcumin, lycopene) with healthy
+              fats enhances absorption. Black pepper increases curcumin
+              absorption by 2000%.
+            </p>
+          </div>
+          <div class="guideline-item">
+            <h3>Whole Food Synergy</h3>
+            <p>
+              Isolated supplements often lack the co‑factors found in whole
+              foods. For example, an apple with its peel provides quercetin plus
+              fiber for better blood sugar control.
+            </p>
+          </div>
+          <div class="guideline-item">
+            <h3>Dosing and Frequency</h3>
+            <p>
+              Most clinical benefits require regular, long‑term consumption. Aim
+              for at least 3–5 servings of these foods per week to achieve
+              therapeutic effects.
+            </p>
+          </div>
+          <div class="guideline-item">
+            <h3>Interaction with Medications</h3>
+            <p>
+              Some foods (grapefruit, garlic, turmeric) can alter drug
+              metabolism. Always review potential interactions with a clinical
+              pharmacist.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- New Section: Latest Research -->
+      <section class="nutrition-research">
+        <h2>Recent Advances in Nutritional Science</h2>
+        <div class="research-grid">
+          <div class="research-card">
+            <h3>Polyphenols and the Gut Microbiome</h3>
+            <p>
+              New research shows that polyphenols from berries and tea are
+              metabolized by gut bacteria into active compounds that reduce
+              systemic inflammation.
+            </p>
+          </div>
+          <div class="research-card">
+            <h3>Personalized Nutrition</h3>
+            <p>
+              Genetic variations (e.g., MTHFR, FTO) influence how individuals
+              respond to dietary components. Tailored advice is becoming
+              feasible with advanced testing.
+            </p>
+          </div>
+          <div class="research-card">
+            <h3>Food as Medicine Programs</h3>
+            <p>
+              Hospitals are now integrating "produce prescriptions" into
+              diabetes and hypertension management, with measurable reductions
+              in HbA1c and blood pressure.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Clinical Note -->
+      <div class="clinical-note">
+        <p>
+          <strong>Clinical reminder:</strong> The information provided is based
+          on peer‑reviewed studies. Therapeutic diets should be supervised by a
+          qualified healthcare professional, especially in patients with chronic
+          diseases or those taking multiple medications.
+        </p>
       </div>
     </main>
 

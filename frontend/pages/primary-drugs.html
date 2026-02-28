@@ -18,7 +18,7 @@
   <body>
     <nav class="navbar">
       <div class="logo" onclick="location.href = '../index.html'">
-        Health<span>Bridge</span>
+        <span class="logo-hb">HB</span> Health<span>Bridge</span>
       </div>
       <ul class="nav-links">
         <li class="nav-item mega-dropdown">
@@ -39,31 +39,175 @@
     </nav>
 
     <header class="drugs-header">
-      <div class="hero-tag">Pharmacy Database</div>
-      <h1>Clinical <span>Drug Directory.</span></h1>
-      <p>
-        A comprehensive database of essential medications, mechanisms, and
-        indications.
-      </p>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-tag">Pharmacy Database</span>
+        <h1>Clinical <span>Drug Directory.</span></h1>
+        <p>
+          A comprehensive database of essential medications, mechanisms, and
+          indications.
+        </p>
 
-      <div class="search-section">
-        <div class="search-box">
-          <i class="fas fa-search"></i>
-          <input
-            type="text"
-            id="drugSearch"
-            placeholder="Search by drug name or medical condition (e.g. Gastritis)..."
-            onkeyup="filterDrugs()"
-          />
-        </div>
-        <div class="search-meta">
-          Showing <span id="visibleCount">0</span> pharmaceutical entries
+        <div class="search-section">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              id="drugSearch"
+              placeholder="Drug name or medical condition"
+              onkeyup="filterDrugs()"
+            />
+          </div>
+          <div class="search-meta">
+            Showing <span id="visibleCount">0</span> pharmaceutical entries
+          </div>
         </div>
       </div>
     </header>
 
+    <!-- New Section: Drug Database Overview -->
+    <section class="drugs-intro">
+      <div class="intro-container">
+        <h2>Understanding Your Medications</h2>
+        <p>
+          This directory includes commonly prescribed drugs, their mechanisms of
+          action, and primary indications. Each entry is based on standard
+          pharmacological references and is intended for educational use. Always
+          consult a healthcare provider before starting or stopping any
+          medication.
+        </p>
+      </div>
+    </section>
+
     <main class="drugs-container">
       <div class="drugs-grid" id="drugsGrid"></div>
+
+      <!-- New Section: Drug Classifications -->
+      <section class="drug-classifications">
+        <h2>Common Drug Classes</h2>
+        <div class="class-grid">
+          <div class="class-card">
+            <h3>Antibiotics</h3>
+            <p>
+              Target bacterial infections by inhibiting cell wall synthesis,
+              protein production, or DNA replication. Examples: Amoxicillin,
+              Ciprofloxacin.
+            </p>
+          </div>
+          <div class="class-card">
+            <h3>Antihypertensives</h3>
+            <p>
+              Lower blood pressure via various mechanisms (ACE inhibitors,
+              beta‑blockers, calcium channel blockers). Examples: Lisinopril,
+              Metoprolol.
+            </p>
+          </div>
+          <div class="class-card">
+            <h3>Antidiabetics</h3>
+            <p>
+              Regulate blood glucose through insulin sensitizers, incretin
+              mimetics, or insulin itself. Examples: Metformin, Insulin
+              glargine.
+            </p>
+          </div>
+          <div class="class-card">
+            <h3>Analgesics</h3>
+            <p>
+              Relieve pain via central or peripheral action. Includes NSAIDs
+              (Ibuprofen) and opioids (Morphine) for severe pain.
+            </p>
+          </div>
+          <div class="class-card">
+            <h3>Anticoagulants</h3>
+            <p>
+              Prevent blood clot formation. Used in atrial fibrillation, DVT,
+              and post‑surgery. Examples: Warfarin, Apixaban.
+            </p>
+          </div>
+          <div class="class-card">
+            <h3>Antidepressants</h3>
+            <p>
+              Modify neurotransmitter levels to manage depression and anxiety.
+              SSRIs (Sertraline) and SNRIs are most common.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- New Section: Safety Guidelines -->
+      <section class="drug-safety">
+        <h2>Safe Medication Practices</h2>
+        <div class="safety-grid">
+          <div class="safety-item">
+            <h3>Follow Prescriptions Exactly</h3>
+            <p>
+              Take the correct dose at the right times. Do not stop early, even
+              if you feel better, unless directed.
+            </p>
+          </div>
+          <div class="safety-item">
+            <h3>Avoid Drug Interactions</h3>
+            <p>
+              Inform your doctor about all medications, supplements, and herbal
+              products you take. Some combinations can be dangerous.
+            </p>
+          </div>
+          <div class="safety-item">
+            <h3>Store Properly</h3>
+            <p>
+              Keep medicines in a cool, dry place away from children. Check
+              expiry dates and dispose of outdated drugs safely.
+            </p>
+          </div>
+          <div class="safety-item">
+            <h3>Report Side Effects</h3>
+            <p>
+              Notify your healthcare provider if you experience unexpected
+              symptoms. Serious reactions should be reported to
+              pharmacovigilance programs.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- New Section: Recent Advances -->
+      <section class="drug-advances">
+        <h2>Recent Advances in Pharmacology</h2>
+        <div class="advances-grid">
+          <div class="advance-card">
+            <h3>mRNA Therapeutics</h3>
+            <p>
+              Beyond vaccines, mRNA technology is being developed for protein
+              replacement therapies and cancer immunotherapies.
+            </p>
+          </div>
+          <div class="advance-card">
+            <h3>Personalized Medicine</h3>
+            <p>
+              Genetic testing now guides drug selection (e.g., warfarin dosing,
+              abacavir hypersensitivity) to improve efficacy and reduce adverse
+              effects.
+            </p>
+          </div>
+          <div class="advance-card">
+            <h3>Biologics and Biosimilars</h3>
+            <p>
+              Monoclonal antibodies and other biologics have transformed
+              treatment for autoimmune diseases and cancer; biosimilars increase
+              access.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Clinical Note -->
+      <div class="drug-note">
+        <p>
+          <strong>Important:</strong> This directory is regularly updated but
+          may not include every available medication. Always verify information
+          with a qualified healthcare professional.
+        </p>
+      </div>
     </main>
 
     <footer class="footer">

@@ -1,88 +1,184 @@
+/* drugs-style.css - Medical white theme with dark navbar/footer */
 :root {
-  --midnight: #0f0e47;
-  --navy: #1a1a5e;
-  --steel: #505081;
-  --lavender: #8686ac;
-  --bg-light: #f1f5f9;
-  --white: #ffffff;
-  --border: #e2e8f0;
+  --pure-white: #ffffff;
+  --background-light: #f5fafd;
+  --text-primary: #122b3f;
+  --text-secondary: #2c4b63;
+  --accent-medical: #1e88e5;
+  --accent-soft: #0b202f;
+  --border-light: #d9e9f2;
+  --hover-bg: #e1f0fa;
+  --card-shadow: 0 10px 25px -5px rgba(0, 50, 80, 0.1);
+
+  /* Dark navbar/footer */
+  --nav-bg: #0b202f;
+  --nav-text: #e0eefb;
+  --dropdown-border: #2b4b65;
+
   --transition: all 0.3s ease;
 }
 
 body {
-  background-color: var(--bg-light);
-  color: var(--midnight);
+  background-color: var(--pure-white);
+  color: var(--text-primary);
+  font-family: "Inter", sans-serif;
+  margin: 0;
 }
 
-/* --- Master Navbar Alignment --- */
+/* Navbar (dark) - matches main style */
 .navbar {
-  background: var(--midnight) !important;
+  background: var(--nav-bg) !important;
+  border-bottom: 2px solid var(--dropdown-border);
 }
 
-/* --- Header & Search --- */
+.logo {
+  color: var(--nav-text) !important;
+}
+.logo-hb {
+  /* Using the navbar background color to create depth */
+  background: var(--nav-bg);
+  /* The "HB" letters are now in the medical blue color */
+  color: var(--accent-medical);
+  /* Adding a border to define the logo box against the dark navbar */
+  border: 2px solid var(--accent-medical);
+  padding: 6px 12px;
+  border-radius: 10px;
+  margin-right: 8px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logo span {
+  /* Ensuring "Bridge" remains consistent with the brand blue */
+  color: var(--accent-medical);
+}
+/* --- Header & Search (updated with overlay) --- */
 .drugs-header {
-  background: var(--midnight);
-  padding: 100px 8% 80px;
+  position: relative;
+  background: url("https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fit=crop&w=1600&q=80")
+    center/cover no-repeat;
+  padding: 120px 8% 100px;
   text-align: center;
-  color: var(--white);
+  color: white;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Darker gradient to make white text pop perfectly */
+  background: linear-gradient(rgba(11, 32, 47, 0.92), rgba(11, 32, 47, 0.7));
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .hero-tag {
-  color: var(--lavender);
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  font-size: 0.8rem;
+  display: inline-block;
+  /* Dark background with blue border for the tag */
+  background: var(--nav-bg);
+  color: white;
+  border: 1px solid black;
+  padding: 8px 20px;
+  border-radius: 40px;
   font-weight: 700;
-  margin-bottom: 15px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 25px;
 }
 
 .drugs-header h1 {
   font-size: 3.5rem;
   font-weight: 800;
   margin-bottom: 20px;
-}
-.drugs-header h1 span {
-  color: var(--lavender);
+  /* Pure white for maximum readability */
+  color: var(--pure-white);
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
+.drugs-header h1 span {
+  /* Switched from dark blue to brand medical blue for a premium look */
+  color: var(--nav-bg) !important;
+}
+
+.drugs-header p {
+  /* Lightened the text to an off-white/steel blue for a clean aesthetic */
+  color: #e0eefb;
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 30px;
+  opacity: 1;
+}
 .search-section {
-  max-width: 800px;
-  margin: 40px auto 0;
+  max-width: 900px;
+  margin: 30px auto 0;
 }
 
 .search-box {
   position: relative;
-  background: var(--white);
-  border-radius: 8px;
+  background: white;
+  border-radius: 60px;
   display: flex;
   align-items: center;
-  padding: 0 25px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  padding: 0 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
 }
 
 .search-box i {
-  color: var(--steel);
+  color: var(--accent-medical);
   font-size: 1.2rem;
 }
 
 #drugSearch {
   width: 100%;
-  padding: 22px 15px;
+  padding: 18px 15px;
   border: none;
   background: transparent;
-  font-size: 1.1rem;
-  color: var(--midnight);
+  font-size: 1rem;
+  color: var(--text-primary);
   outline: none;
 }
 
 .search-meta {
   margin-top: 20px;
-  color: var(--lavender);
+  color: var(--accent-soft);
   font-size: 0.9rem;
   font-weight: 600;
 }
 
-/* --- Drugs Grid --- */
+/* --- Intro Section --- */
+.drugs-intro {
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.drugs-intro h2 {
+  font-size: 2.2rem;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+
+.drugs-intro p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+/* --- Drugs Grid (original, enhanced) --- */
 .drugs-container {
   max-width: 1300px;
   margin: 60px auto 120px;
@@ -93,33 +189,35 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 30px;
+  margin-bottom: 60px;
 }
 
-/* --- Drug Card --- */
+/* Drug Card (original classes, enhanced styling) */
 .drug-card {
-  background: var(--white);
-  border-radius: 4px;
-  border: 1px solid var(--border);
+  background: var(--pure-white);
+  border-radius: 24px;
+  border: 1px solid var(--border-light);
   overflow: hidden;
   transition: var(--transition);
   display: flex;
   flex-direction: column;
+  box-shadow: var(--card-shadow);
 }
 
 .drug-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 15px 30px rgba(15, 14, 71, 0.1);
-  border-color: var(--lavender);
+  box-shadow: 0 20px 30px -10px rgba(30, 136, 229, 0.2);
+  border-color: var(--accent-medical);
 }
 
-/* Image Placeholder / Drug Icon Section */
+/* Image placeholder (original) */
 .drug-image {
   height: 180px;
-  background: #f8fbff;
+  background: var(--background-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .drug-image img {
@@ -128,6 +226,7 @@ body {
   object-fit: cover;
 }
 
+/* Content area (original) */
 .drug-content {
   padding: 25px;
   flex-grow: 1;
@@ -138,7 +237,7 @@ body {
 .drug-name {
   font-size: 1.4rem;
   font-weight: 800;
-  color: var(--midnight);
+  color: var(--text-primary);
   margin-bottom: 15px;
 }
 
@@ -150,41 +249,152 @@ body {
 }
 
 .tag {
-  background: rgba(80, 80, 129, 0.1);
-  color: var(--steel);
+  background: var(--background-light);
+  color: var(--accent-medical);
   padding: 5px 12px;
-  border-radius: 4px;
+  border-radius: 20px;
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
+  border: 1px solid var(--border-light);
 }
 
 .drug-desc {
   font-size: 0.95rem;
-  line-height: 1.6;
-  color: #64748b;
+  line-height: 1.7;
+  color: var(--text-secondary);
   margin-top: auto;
   padding-top: 15px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--border-light);
 }
 
-/* --- Footer --- */
+/* New Sections */
+.drug-classifications,
+.drug-safety,
+.drug-advances {
+  margin: 80px 0;
+}
+
+.drug-classifications h2,
+.drug-safety h2,
+.drug-advances h2 {
+  font-size: 2.2rem;
+  color: var(--text-primary);
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.class-grid,
+.safety-grid,
+.advances-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.class-card,
+.safety-item,
+.advance-card {
+  background: var(--pure-white);
+  padding: 30px;
+  border-radius: 24px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s;
+}
+
+.class-card:hover,
+.safety-item:hover,
+.advance-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-medical);
+}
+
+.class-card h3,
+.safety-item h3,
+.advance-card h3 {
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 15px;
+}
+
+.class-card p,
+.safety-item p,
+.advance-card p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Clinical note */
+.drug-note {
+  background: #e3f2fd;
+  border-left: 6px solid var(--accent-medical);
+  padding: 25px 30px;
+  border-radius: 16px;
+  margin: 60px 0 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  box-shadow: var(--card-shadow);
+}
+
+.drug-note strong {
+  color: var(--accent-medical);
+}
+
+/* --- Footer (dark) --- */
 .footer {
-  background: var(--midnight) !important;
+  background: var(--nav-bg) !important;
+  color: var(--nav-text);
+  border-top: 2px solid var(--dropdown-border);
   padding: 80px 8% 40px;
   margin-top: 0;
 }
 
+.footer-section h2,
+.footer-section h3 {
+  color: white;
+}
+.footer-section h2 span {
+  color: var(--accent-medical);
+}
+.footer-section p,
+.footer-section a {
+  color: #cbd5e1;
+}
+.footer-section a:hover {
+  color: var(--accent-medical);
+}
 .disclaimer-alert {
   background: rgba(255, 255, 255, 0.05);
   padding: 20px;
   border-left: 4px solid #f43f5e;
-  border-radius: 4px;
-  color: var(--lavender);
+  border-radius: 8px;
+  color: #a0b8cc;
   font-size: 0.85rem;
   margin-top: 20px;
 }
+.footer-bottom {
+  border-top-color: var(--dropdown-border);
+  color: #8fa3b8;
+}
 
+/* Responsive */
+@media (max-width: 768px) {
+  .drugs-header h1 {
+    font-size: 2.5rem;
+  }
+  .drugs-grid {
+    grid-template-columns: 1fr;
+  }
+  .drugs-intro h2,
+  .drug-classifications h2,
+  .drug-safety h2,
+  .drug-advances h2 {
+    font-size: 1.8rem;
+  }
+}
+
+/* Original utility class (hidden) remains */
 .hidden {
   display: none;
 }

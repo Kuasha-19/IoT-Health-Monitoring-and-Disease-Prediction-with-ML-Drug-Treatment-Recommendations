@@ -358,7 +358,7 @@ async def get_doctor_stats():
         cursor.execute("SELECT COUNT(*) as total_checks FROM predictions")
         total_checks = cursor.fetchone()['total_checks']
 
-        # ৩. কতজন পেশেন্টকে অন্তত একবার মেসেজ দেওয়া হয়েছে
+        # ৩. কতজন পেশেন্টকে অন্তত একবার মেসেজ দেওয়া হয়েছে
         cursor.execute("SELECT COUNT(DISTINCT patient_id_str) as responded FROM doctor_feedback")
         responded = cursor.fetchone()['responded']
 
@@ -385,8 +385,9 @@ async def get_doctor_patient_list():
 
         result = []
         for p in patients:
+            # FIXED: prefix columns with p. to avoid ambiguous 'created_at'
             cursor.execute("""
-                SELECT result_status, analysis_score, created_at
+                SELECT p.result_status, p.analysis_score, p.created_at
                 FROM predictions p
                 JOIN users u ON p.user_id = u.id
                 WHERE u.id_str = %s
