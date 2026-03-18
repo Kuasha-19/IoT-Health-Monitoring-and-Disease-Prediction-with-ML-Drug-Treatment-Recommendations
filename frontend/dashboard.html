@@ -34,33 +34,21 @@
       </div>
 
       <nav class="sidebar-nav">
-        <!-- Patient links (visible only for patient) -->
+        <!-- Patient links -->
         <div id="patientLinks">
-          <a href="#" class="nav-link" onclick="showSection('predictor')"
-            >AI Predictor</a
-          >
-          <a href="#" class="nav-link" onclick="showSection('reports')"
-            >My Reports</a
-          >
+          <a href="#" class="nav-link" onclick="showSection('predictor')">AI Predictor</a>
+          <a href="#" class="nav-link" onclick="showSection('heart-monitor')">Heart Monitor</a>
+          <a href="#" class="nav-link" onclick="showSection('reports')">My Reports</a>
         </div>
 
-        <!-- Doctor links (visible only for doctor) -->
+        <!-- Doctor links -->
         <div id="doctorLinks" class="hidden">
-          <a href="#" class="nav-link" onclick="showSection('overview')"
-            >Overview</a
-          >
-          <a href="#" class="nav-link" onclick="showSection('manage-patients')"
-            >Patient Checkup</a
-          >
+          <a href="#" class="nav-link" onclick="showSection('overview')">Overview</a>
+          <a href="#" class="nav-link" onclick="showSection('manage-patients')">Patient Checkup</a>
+          <a href="#" class="nav-link" onclick="showSection('heart-monitor')">Heart Monitor</a>
         </div>
 
-        <!-- Common logout -->
-        <a
-          href="index.html"
-          class="nav-link logout"
-          onclick="localStorage.clear()"
-          >Terminate Session</a
-        >
+        <a href="index.html" class="nav-link logout" onclick="localStorage.clear()">Terminate Session</a>
       </nav>
     </aside>
 
@@ -69,12 +57,11 @@
         <div class="context-title">
           <span class="label-heading">Workspace</span>
           <h2 id="sectionTitle">AI Predictor</h2>
-          <!-- default title will be updated by JS -->
         </div>
         <div class="role-badge" id="roleBadge">...</div>
       </header>
 
-      <!-- ========== OVERVIEW (only doctor sees this) ========== -->
+      <!-- ========== OVERVIEW (doctor only) ========== -->
       <section id="overview" class="content-section hidden">
         <div id="doctorStats" class="stats-grid hidden">
           <div class="summary-card">
@@ -103,11 +90,7 @@
           </div>
         </div>
 
-        <div
-          id="doctorPatientList"
-          class="patient-list-card hidden"
-          style="margin-top: 2rem"
-        >
+        <div id="doctorPatientList" class="patient-list-card hidden" style="margin-top: 2rem">
           <span class="label-heading">Patient Status Overview</span>
           <h4>Latest Disease & Risk by Patient</h4>
           <div id="patientListContainer" class="scrollable-list"></div>
@@ -161,72 +144,12 @@
             <div class="form-row symptoms-group">
               <label>Symptoms (0–10 scale):</label>
               <div class="symptom-inputs">
-                <div>
-                  <label>Fever</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="1"
-                    id="fever"
-                    value="0"
-                  />
-                </div>
-                <div>
-                  <label>Cough</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="1"
-                    id="cough"
-                    value="0"
-                  />
-                </div>
-                <div>
-                  <label>Chest Pain</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="1"
-                    id="chest_pain"
-                    value="0"
-                  />
-                </div>
-                <div>
-                  <label>Shortness of Breath</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="1"
-                    id="shortness_breath"
-                    value="0"
-                  />
-                </div>
-                <div>
-                  <label>Fatigue</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="1"
-                    id="fatigue"
-                    value="0"
-                  />
-                </div>
-                <div>
-                  <label>Headache</label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="1"
-                    id="headache"
-                    value="0"
-                  />
-                </div>
+                <div><label>Fever</label><input type="number" min="0" max="10" step="1" id="fever" value="0" /></div>
+                <div><label>Cough</label><input type="number" min="0" max="10" step="1" id="cough" value="0" /></div>
+                <div><label>Chest Pain</label><input type="number" min="0" max="10" step="1" id="chest_pain" value="0" /></div>
+                <div><label>Shortness of Breath</label><input type="number" min="0" max="10" step="1" id="shortness_breath" value="0" /></div>
+                <div><label>Fatigue</label><input type="number" min="0" max="10" step="1" id="fatigue" value="0" /></div>
+                <div><label>Headache</label><input type="number" min="0" max="10" step="1" id="headache" value="0" /></div>
               </div>
             </div>
             <button type="submit" class="btn-send">Predict & Save</button>
@@ -235,17 +158,242 @@
             <h4>Prediction Result</h4>
             <p><strong>Disease:</strong> <span id="predDisease"></span></p>
             <p><strong>Risk Score:</strong> <span id="predScore"></span>%</p>
-            <p>
-              <strong>Suggested Drugs:</strong> <span id="predDrugs"></span>
-            </p>
-            <p>
-              <strong>Suggested Foods:</strong> <span id="predFoods"></span>
-            </p>
+            <p><strong>Suggested Drugs:</strong> <span id="predDrugs"></span></p>
+            <p><strong>Suggested Foods:</strong> <span id="predFoods"></span></p>
             <p><strong>Routine:</strong> <span id="predRoutine"></span></p>
           </div>
         </div>
       </section>
 
+     <!-- ============================================================
+     HEART MONITOR SECTION
+     Replace your existing <section id="heart-monitor"> block
+     with this entire block in dashboard.html
+     ============================================================ -->
+
+<section id="heart-monitor" class="content-section hidden">
+
+  <!-- Critical Alert Banner -->
+  <div id="ecgAlertBanner" class="ecg-alert-banner hidden">
+    <div class="ecg-alert-icon">&#9888;</div>
+    <div class="ecg-alert-body">
+      <strong id="ecgAlertTitle">Critical Anomaly Detected</strong>
+      <span id="ecgAlertDesc">Review findings below and contact your physician immediately.</span>
+    </div>
+    <button class="ecg-alert-dismiss" onclick="dismissAlert()">&#10005;</button>
+  </div>
+
+  <!-- Sub-tabs -->
+  <div class="heart-tabs">
+    <button class="heart-tab active" id="tabLive" onclick="showHeartTab('ecg-analysis', this)">Live Monitor</button>
+    <button class="heart-tab" id="tabHist"  onclick="showHeartTab('ecg-history',  this)">ECG History</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       TAB 1 — LIVE MONITOR
+  ══════════════════════════════════════════════════ -->
+  <div id="ecg-analysis" class="heart-tab-content">
+
+    <!-- Top row: Device connect + vital stats -->
+    <div class="ecg-top-row">
+
+      <!-- Device Panel -->
+      <div class="ecg-device-card">
+        <div class="shell-header" style="margin-bottom:.75rem">
+          <span class="label-heading">Arduino AD8232</span>
+          <h4 id="deviceStatusText">No device connected</h4>
+        </div>
+
+        <div class="ecg-port-row">
+          <select id="portSelect" class="ecg-select">
+            <option value="">Scanning ports…</option>
+          </select>
+          <button id="btnConnect" class="btn-connect" onclick="toggleArduinoConnection()">
+            Connect
+          </button>
+        </div>
+
+        <div class="ecg-device-meta">
+          <div class="ecg-meta-chip" id="metaStatus">
+            <span class="ecg-dot ecg-dot-off"></span> Disconnected
+          </div>
+          <div class="ecg-meta-chip" id="metaBaud">9600 baud</div>
+          <div class="ecg-meta-chip" id="metaRate">360 Hz</div>
+        </div>
+
+        <div class="ecg-device-actions">
+          <button id="btnRecord" class="btn-outline" onclick="toggleRecording()" disabled>
+            &#9679; Start Recording
+          </button>
+          <button id="btnAnalyze" class="btn-send" onclick="runEcgAnalysis()" disabled>
+            Run ML Analysis
+          </button>
+        </div>
+      </div>
+
+      <!-- Vital Metrics -->
+      <div class="ecg-vitals-grid">
+        <div class="ecg-vital-card">
+          <span class="label-heading">Heart Rate</span>
+          <div class="vital-val" id="vHR">—</div>
+          <span class="vital-unit">BPM</span>
+        </div>
+        <div class="ecg-vital-card">
+          <span class="label-heading">RR Interval</span>
+          <div class="vital-val" id="vRR">—</div>
+          <span class="vital-unit">ms</span>
+        </div>
+        <div class="ecg-vital-card">
+          <span class="label-heading">Signal Quality</span>
+          <div class="vital-val" id="vSQ">—</div>
+          <span class="vital-unit">AD8232</span>
+        </div>
+        <div class="ecg-vital-card">
+          <span class="label-heading">Samples</span>
+          <div class="vital-val" id="vSamples">0</div>
+          <span class="vital-unit">buffered</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ECG Waveform Canvas -->
+    <div class="chart-shell" style="margin-top:1rem">
+      <div class="shell-header">
+        <span class="label-heading">Waveform Viewer</span>
+        <h4>Live ECG trace from Arduino AD8232 — anomaly regions highlighted after analysis</h4>
+        <span id="recordingBadge" class="ecg-recording-badge hidden">
+          <span class="ecg-dot ecg-dot-live"></span> Recording
+        </span>
+      </div>
+      <div class="ecg-canvas-wrapper">
+        <canvas id="ecgLiveCanvas"></canvas>
+        <div id="ecgPlaceholder" class="ecg-placeholder">
+          <p>Connect your Arduino and press <strong>Connect</strong> to begin the live ECG stream.</p>
+          <p style="font-size:.8rem;margin-top:.5rem;opacity:.6">
+            Arduino UNO + AD8232 → USB Serial → WebSocket → Live waveform
+          </p>
+        </div>
+      </div>
+      <div class="ecg-time-axis" id="ecgTimeAxis">
+        <span>0s</span><span id="axMid">—</span><span id="axEnd">—</span>
+      </div>
+    </div>
+
+    <!-- Analysis Result — shown after ML run -->
+    <div id="ecgResultArea" class="ecg-result-area hidden">
+
+      <!-- Prediction Timeline -->
+      <div class="chart-shell">
+        <div class="shell-header">
+          <span class="label-heading">Prediction Timeline</span>
+          <h4>Each bar = one 10s segment — color = predicted condition</h4>
+        </div>
+        <div class="ecg-seg-bar" id="ecgSegBar"></div>
+        <div class="ecg-seg-labels" id="ecgSegLabels"></div>
+        <div class="ecg-legend" id="ecgLegend"></div>
+      </div>
+
+      <!-- Result Grid: summary + anomalies + probability -->
+      <div class="ecg-result-grid">
+
+        <!-- ML Summary Card -->
+        <div class="ecg-summary-card">
+          <span class="label-heading">ML Analysis Summary</span>
+          <div class="ecg-status-badge" id="ecgStatusBadge">—</div>
+          <div class="ecg-meta-grid">
+            <div>
+              <span class="label-heading">Primary Condition</span>
+              <p id="ecgPrimaryCondition">—</p>
+            </div>
+            <div>
+              <span class="label-heading">Avg Confidence</span>
+              <p id="ecgConfidence">—</p>
+            </div>
+            <div>
+              <span class="label-heading">Normal Segments</span>
+              <p id="ecgNormalSegs">—</p>
+            </div>
+            <div>
+              <span class="label-heading">Abnormal Segments</span>
+              <p id="ecgAbnormalSegs">—</p>
+            </div>
+            <div>
+              <span class="label-heading">Duration</span>
+              <p id="ecgDuration">—</p>
+            </div>
+            <div>
+              <span class="label-heading">Signal Quality</span>
+              <p id="ecgSignalQuality">—</p>
+            </div>
+          </div>
+
+          <!-- Overall verdict bar -->
+          <div class="ecg-verdict-bar" id="ecgVerdictBar"></div>
+
+          <p class="ecg-disclaimer">
+            &#9432; AI analysis is for informational purposes only and does not replace clinical diagnosis.
+          </p>
+        </div>
+
+        <!-- Anomaly Panel -->
+        <div class="ecg-anomalies-panel">
+          <span class="label-heading">Detected Anomalies</span>
+          <h4>Click a segment to highlight its waveform region</h4>
+          <div id="ecgAnomalyList" class="ecg-anomaly-list"></div>
+        </div>
+
+        <!-- Condition Probability Bars -->
+        <div class="ecg-prob-panel">
+          <span class="label-heading">Condition Probability (Ensemble Average)</span>
+          <div id="ecgProbBars" class="ecg-prob-bars"></div>
+        </div>
+
+      </div>
+
+      <!-- Segment detail table -->
+      <div class="chart-shell" style="margin-top:1rem">
+        <div class="shell-header">
+          <span class="label-heading">Anomaly Log</span>
+          <h4>Segment-by-segment predictions</h4>
+        </div>
+        <div class="ecg-table-wrap">
+          <table class="ecg-seg-table">
+            <thead>
+              <tr>
+                <th>#</th><th>Start</th><th>End</th>
+                <th>Prediction</th><th>Confidence</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="ecgSegTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Report row -->
+      <div class="ecg-report-row">
+        <span style="font-size:.85rem;color:#64748B;">
+          Analysis complete. Generate a clinical PDF report for this session.
+        </span>
+        <button class="btn-send" onclick="generateEcgReport()">Generate Report</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       TAB 2 — ECG HISTORY
+  ══════════════════════════════════════════════════ -->
+  <div id="ecg-history" class="heart-tab-content hidden">
+    <div class="shell-header">
+      <span class="label-heading">ECG Session History</span>
+      <h4>Past analyses — most recent first</h4>
+    </div>
+    <div id="ecgHistoryList" class="ecg-history-list">
+      <p style="color:#64748B;font-size:.875rem;">Loading history…</p>
+    </div>
+  </div>
+
+</section>
       <!-- ========== MY REPORTS ========== -->
       <section id="reports" class="content-section hidden">
         <div class="shell-header">
@@ -266,92 +414,48 @@
         <div class="split-viewport">
           <div class="analysis-panel" id="sideA">
             <div class="panel-search">
-              <input
-                type="text"
-                id="inputA"
-                placeholder="SEARCH_PATIENT_A..."
-                onkeyup="liveSearch('A')"
-              />
+              <input type="text" id="inputA" placeholder="SEARCH_PATIENT_A..." onkeyup="liveSearch('A')" />
             </div>
             <div id="listA" class="scrollable-registry"></div>
             <div id="dataA" class="panel-details hidden">
               <h4 id="nameA" class="patient-title">Patient A</h4>
               <div class="clinical-metric-grid">
-                <div class="graph-shell">
-                  <label>Temperature Trend</label
-                  ><canvas id="chartA_temp"></canvas>
-                </div>
-                <div class="graph-shell">
-                  <label>Blood Pressure</label><canvas id="chartA_bp"></canvas>
-                </div>
-                <div class="graph-shell">
-                  <label>Heart Rate</label><canvas id="chartA_hr"></canvas>
-                </div>
-                <div class="graph-shell">
-                  <label>Symptoms Count</label
-                  ><canvas id="chartA_symptoms"></canvas>
-                </div>
+                <div class="graph-shell"><label>Temperature Trend</label><canvas id="chartA_temp"></canvas></div>
+                <div class="graph-shell"><label>Blood Pressure</label><canvas id="chartA_bp"></canvas></div>
+                <div class="graph-shell"><label>Heart Rate</label><canvas id="chartA_hr"></canvas></div>
+                <div class="graph-shell"><label>Symptoms Count</label><canvas id="chartA_symptoms"></canvas></div>
               </div>
               <div class="clinical-history-vault">
-                <label class="label-heading"
-                  >Current Meds & Food (History)</label
-                >
+                <label class="label-heading">Current Meds & Food (History)</label>
                 <div id="historyA" class="history-scroll"></div>
               </div>
               <div class="instruction-terminal">
-                <textarea
-                  id="msgA"
-                  placeholder="Send message to patient..."
-                ></textarea>
-                <button class="btn-send" onclick="sendAdvice('A')">
-                  Send Message
-                </button>
+                <textarea id="msgA" placeholder="Send message to patient..."></textarea>
+                <button class="btn-send" onclick="sendAdvice('A')">Send Message</button>
               </div>
             </div>
           </div>
 
           <div class="analysis-panel" id="sideB">
             <div class="panel-search">
-              <input
-                type="text"
-                id="inputB"
-                placeholder="SEARCH_PATIENT_B..."
-                onkeyup="liveSearch('B')"
-              />
+              <input type="text" id="inputB" placeholder="SEARCH_PATIENT_B..." onkeyup="liveSearch('B')" />
             </div>
             <div id="listB" class="scrollable-registry"></div>
             <div id="dataB" class="panel-details hidden">
               <h4 id="nameB" class="patient-title">Patient B</h4>
               <div class="clinical-metric-grid">
-                <div class="graph-shell">
-                  <label>Temperature Trend</label
-                  ><canvas id="chartB_temp"></canvas>
-                </div>
-                <div class="graph-shell">
-                  <label>Blood Pressure</label><canvas id="chartB_bp"></canvas>
-                </div>
-                <div class="graph-shell">
-                  <label>Heart Rate</label><canvas id="chartB_hr"></canvas>
-                </div>
-                <div class="graph-shell">
-                  <label>Symptoms Count</label
-                  ><canvas id="chartB_symptoms"></canvas>
-                </div>
+                <div class="graph-shell"><label>Temperature Trend</label><canvas id="chartB_temp"></canvas></div>
+                <div class="graph-shell"><label>Blood Pressure</label><canvas id="chartB_bp"></canvas></div>
+                <div class="graph-shell"><label>Heart Rate</label><canvas id="chartB_hr"></canvas></div>
+                <div class="graph-shell"><label>Symptoms Count</label><canvas id="chartB_symptoms"></canvas></div>
               </div>
               <div class="clinical-history-vault">
-                <label class="label-heading"
-                  >Current Meds & Food (History)</label
-                >
+                <label class="label-heading">Current Meds & Food (History)</label>
                 <div id="historyB" class="history-scroll"></div>
               </div>
               <div class="instruction-terminal">
-                <textarea
-                  id="msgB"
-                  placeholder="Send message to patient..."
-                ></textarea>
-                <button class="btn-send" onclick="sendAdvice('B')">
-                  Send Message
-                </button>
+                <textarea id="msgB" placeholder="Send message to patient..."></textarea>
+                <button class="btn-send" onclick="sendAdvice('B')">Send Message</button>
               </div>
             </div>
           </div>
