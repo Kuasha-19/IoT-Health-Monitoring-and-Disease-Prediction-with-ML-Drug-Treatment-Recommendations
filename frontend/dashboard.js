@@ -625,19 +625,21 @@ async function loadPatientHealthTrend() {
 
 
 
-//initECGMonitor()
 /* ============================================================
-   HEART MONITOR — ECG Live JavaScript
+   HEART MONITOR — ECG Live JavaScript  v2.0
    Paste/append this into dashboard.js  (replaces any old ECG code)
+
+   SIMULATION MODE: works without Arduino hardware.
+   Toggle with the "Simulate" button that appears when no ports found.
    ============================================================ */
 
 // ── Constants ─────────────────────────────────────────────────
-const API = 'http://127.0.0.1:8000';
-const WS_BASE = 'ws://127.0.0.1:8000';
-const SAMPLE_RATE = 360;            // Hz (match your Arduino sketch)
-const SEGMENT_DURATION = 10;        // seconds per ML window
-const WAVEFORM_WINDOW_S = 10;       // seconds shown on canvas at once
-const MAX_BUFFER_S = 300;           // max seconds to buffer (5 min)
+const API              = 'http://127.0.0.1:8000';
+const WS_BASE          = 'ws://127.0.0.1:8000';
+const SAMPLE_RATE      = 360;
+const SEGMENT_DURATION = 10;
+const WAVEFORM_WINDOW_S = 10;
+const MAX_BUFFER_S     = 300;
 
 const CONDITION_COLORS = {
   Supraventricular: '#378ADD',
@@ -651,19 +653,56 @@ const CONDITION_COLORS = {
 };
 
 // ── State ──────────────────────────────────────────────────────
-let ecgSocket      = null;        // WebSocket to backend
-let ecgBuffer      = [];          // raw sample buffer [{t, v}]
-let isConnected    = false;
-let isRecording    = false;
-let lastAnalysis   = null;        // most recent ML result
-let animFrame      = null;
-let ecgCanvas      = null;
-let ecgCtx         = null;
-let t0             = null;        // recording start time (ms)
-let heartRateHistory = [];        // last N computed BPM values
-let highlightRegion  = null;      // {startPx, endPx, color}
+let ecgSocket        = null;
+let ecgBuffer        = [];
+let isConnected      = false;
+let isRecording      = false;
+let isSimulating     = false;
+let simInterval      = null;
+let simPhase         = 0;
+let simScenario      = 'mixed';
+let lastAnalysis     = null;
+let animFrame        = null;
+let ecgCanvas        = null;
+let ecgCtx           = null;
+let t0               = null;
+let heartRateHistory = [];
+let highlightRegion  = null;
 
-// ── Init (called by showSection in dashboard.js) ───────────────
+// ── Simulation scenarios ───────────────────────────────────────
+const SIM_SCENARIOS = {
+  normal:      { label: 'Normal Sinus',        bpm: 72,  noise: 0.02, shape: 'normal'  },
+  tachycardia: { label: 'Sinus Tachycardia',   bpm: 115, noise: 0.03, shape: 'tachy'   },
+  bradycardia: { label: 'Bradycardia',          bpm: 42,  noise: 0.02, shape: 'brady'   },
+  af:          { label: 'Atrial Fibrillation',  bpm: 90,  noise: 0.08, shape: 'af'      },
+  ventricular: { label: 'Ventricular Pattern',  bpm: 80,  noise: 0.04, shape: 'ventr'   },
+  mixed:       { label: 'Mixed (default demo)', bpm: 75,  noise: 0.04, shape: 'mixed'   },
+};
+
+// ── ECG waveform generator ─────────────────────────────────────
+function ecgSample(phase, shape) {
+  const p = phase % 1;
+  let v = 0.15 * Math.exp(-Math.pow((p - 0.15) / 0.04, 2));
+
+  if (shape === 'af') {
+    v += (Math.random() - 0.5) * 0.06;
+    if (p > 0.35 && p < 0.37) v -= 0.3;
+    if (p > 0.37 && p < 0.40) v += 1.8 * (1 - Math.random() * 0.3);
+    if (p > 0.40 && p < 0.43) v -= 0.5;
+  } else if (shape === 'ventr') {
+    if (p > 0.32 && p < 0.36) v -= 0.4;
+    if (p > 0.36 && p < 0.45) v += 1.6 * Math.sin((p - 0.36) / 0.09 * Math.PI);
+    if (p > 0.45 && p < 0.52) v -= 0.6 * Math.sin((p - 0.45) / 0.07 * Math.PI);
+  } else {
+    if (p > 0.34 && p < 0.36) v -= 0.25;
+    if (p > 0.36 && p < 0.38) v += 1.8;
+    if (p > 0.38 && p < 0.41) v -= 0.45;
+    v += 0.22 * Math.exp(-Math.pow((p - 0.60) / 0.07, 2));
+  }
+  return v;
+}
+
+// ── Init ───────────────────────────────────────────────────────
 function initEcgMonitor() {
   ecgCanvas = document.getElementById('ecgLiveCanvas');
   if (!ecgCanvas) return;
@@ -673,15 +712,15 @@ function initEcgMonitor() {
   loadPortList();
   loadEcgHistory();
   startRenderLoop();
+  injectSimDotStyle();
 }
 
 function resizeEcgCanvas() {
   if (!ecgCanvas) return;
   const dpr = window.devicePixelRatio || 1;
-  const w   = ecgCanvas.offsetWidth;
-  const h   = 180;
-  ecgCanvas.width  = w * dpr;
-  ecgCanvas.height = h * dpr;
+  ecgCanvas.width  = ecgCanvas.offsetWidth * dpr;
+  ecgCanvas.height = 180 * dpr;
+  ecgCtx.setTransform(1,0,0,1,0,0);
   ecgCtx.scale(dpr, dpr);
 }
 
@@ -691,112 +730,162 @@ async function loadPortList() {
   try {
     const res   = await fetch(`${API}/api/ecg/ports`);
     const ports = await res.json();
-    if (ports.length === 0) {
-      sel.innerHTML = '<option value="">No serial ports found</option>';
+    if (ports.length > 0) {
+      sel.innerHTML = ports.map(p =>
+        `<option value="${p.port}">${p.port} — ${p.description}</option>`
+      ).join('');
       return;
     }
-    sel.innerHTML = ports.map(p =>
-      `<option value="${p.port}">${p.port} — ${p.description}</option>`
-    ).join('');
-  } catch {
-    sel.innerHTML = '<option value="">Server unreachable</option>';
-  }
+  } catch (_) { /* backend may not be running */ }
+
+  sel.innerHTML = '<option value="__SIM__">⚡ Simulation Mode (no hardware)</option>';
+  injectScenarioSelector();
 }
 
-// ── Connect / Disconnect Arduino ───────────────────────────────
+function injectScenarioSelector() {
+  if (document.getElementById('simScenarioRow')) return;
+  const portRow = document.querySelector('.ecg-port-row');
+  if (!portRow) return;
+
+  const div = document.createElement('div');
+  div.id = 'simScenarioRow';
+  div.style.cssText = 'display:flex;gap:.5rem;align-items:center;margin-top:.4rem;flex-wrap:wrap';
+  div.innerHTML = `
+    <span style="font-size:.75rem;color:#64748B;white-space:nowrap">ECG Pattern:</span>
+    <select id="simScenarioSelect" class="ecg-select" style="flex:1;font-size:.78rem"
+            onchange="simScenario=this.value">
+      ${Object.entries(SIM_SCENARIOS).map(([k,v]) =>
+        `<option value="${k}"${k==='mixed'?' selected':''}>${v.label}</option>`
+      ).join('')}
+    </select>`;
+  portRow.insertAdjacentElement('afterend', div);
+
+  const info = document.createElement('p');
+  info.style.cssText = 'font-size:.72rem;color:#b45309;margin-top:.35rem;background:#fef9c3;padding:5px 8px;border-radius:6px;line-height:1.5';
+  info.innerHTML = '⚡ <strong>No hardware detected.</strong> Simulation mode generates a realistic synthetic ECG. Connect your Arduino when available.';
+  div.insertAdjacentElement('afterend', info);
+}
+
+// ── Connect / Disconnect ───────────────────────────────────────
 function toggleArduinoConnection() {
-  if (isConnected) {
-    disconnectArduino();
+  if (isConnected) { disconnectArduino(); return; }
+  const port = document.getElementById('portSelect').value;
+  if (port === '__SIM__' || !port) {
+    connectSimulation();
   } else {
-    connectArduino();
+    connectArduino(port);
   }
 }
 
-function connectArduino() {
-  const portSel = document.getElementById('portSelect');
-  const port    = portSel.value;
-  if (!port) return alert('Please select a serial port first.');
-
-  // Encode "/" for URL safety (Linux ports like /dev/ttyUSB0)
+// ── Real Arduino via WebSocket ─────────────────────────────────
+function connectArduino(port) {
   const safePort = port.replace(/\//g, '__');
   ecgSocket = new WebSocket(`${WS_BASE}/ws/ecg/${safePort}`);
 
   ecgSocket.onopen = () => {
-    isConnected = true;
+    isConnected = true; isSimulating = false;
     t0 = Date.now();
-    updateDeviceUI(true);
-    console.log('ECG WebSocket connected');
+    updateDeviceUI(true, false);
   };
-
   ecgSocket.onmessage = (event) => {
     const msg = JSON.parse(event.data);
-    if (msg.error) {
-      alert('Arduino error: ' + msg.error);
-      disconnectArduino();
-      return;
-    }
+    if (msg.error) { alert('Arduino: ' + msg.error); disconnectArduino(); return; }
     if (isRecording) {
-      // Normalise raw ADC (0–1023) to -1…+1
-      const normalised = (msg.v - 512) / 512;
-      ecgBuffer.push({ t: msg.t, v: normalised });
+      ecgBuffer.push({ t: msg.t, v: (msg.v - 512) / 512 });
+      trimBuffer(); updateVitals();
+    }
+  };
+  ecgSocket.onerror = () => { alert('WebSocket error. Is the backend running?'); disconnectArduino(); };
+  ecgSocket.onclose = () => { if (isConnected) disconnectArduino(); };
+}
 
-      // Trim buffer to MAX_BUFFER_S
-      const maxSamples = MAX_BUFFER_S * SAMPLE_RATE;
-      if (ecgBuffer.length > maxSamples) {
-        ecgBuffer.splice(0, ecgBuffer.length - maxSamples);
+// ── Simulation mode ────────────────────────────────────────────
+function connectSimulation() {
+  isConnected = true; isSimulating = true;
+  t0 = Date.now(); simPhase = 0;
+  updateDeviceUI(true, true);
+  startSimulation();
+}
+
+function startSimulation() {
+  if (simInterval) clearInterval(simInterval);
+  const BATCH = 6;
+  const MS_PER_BATCH = Math.round(1000 / (SAMPLE_RATE / BATCH));
+
+  simInterval = setInterval(() => {
+    if (!isConnected) { clearInterval(simInterval); return; }
+    if (!isRecording) { simPhase += 0.001; return; }
+
+    const scenario = SIM_SCENARIOS[simScenario] || SIM_SCENARIOS.mixed;
+    const beatsPerSec = scenario.bpm / 60;
+
+    for (let i = 0; i < BATCH; i++) {
+      simPhase += beatsPerSec / SAMPLE_RATE;
+
+      let shape = scenario.shape;
+      if (simScenario === 'mixed') {
+        const elapsed = ecgBuffer.length / SAMPLE_RATE;
+        shape = elapsed < 20  ? 'normal'
+               : elapsed < 40 ? 'tachy'
+               : elapsed < 60 ? 'af'
+               : elapsed < 80 ? 'ventr'
+               : elapsed < 100 ? 'normal'
+               : 'af';
       }
 
-      updateVitals();
+      const raw   = ecgSample(simPhase, shape);
+      const noise = (Math.random() - 0.5) * scenario.noise;
+      ecgBuffer.push({ t: Date.now() - t0, v: Math.max(-1, Math.min(1, raw + noise)) });
     }
-  };
-
-  ecgSocket.onerror = () => {
-    alert('WebSocket error — check the backend is running and the port is correct.');
-    disconnectArduino();
-  };
-
-  ecgSocket.onclose = () => {
-    if (isConnected) disconnectArduino();
-  };
+    trimBuffer(); updateVitals();
+  }, MS_PER_BATCH);
 }
 
 function disconnectArduino() {
-  if (ecgSocket) { ecgSocket.close(); ecgSocket = null; }
-  isConnected = false;
-  isRecording = false;
-  updateDeviceUI(false);
+  if (ecgSocket)   { ecgSocket.close(); ecgSocket = null; }
+  if (simInterval) { clearInterval(simInterval); simInterval = null; }
+  isConnected = false; isSimulating = false; isRecording = false;
+  updateDeviceUI(false, false);
   updateRecordingUI(false);
 }
 
-function updateDeviceUI(connected) {
+function trimBuffer() {
+  const max = MAX_BUFFER_S * SAMPLE_RATE;
+  if (ecgBuffer.length > max) ecgBuffer.splice(0, ecgBuffer.length - max);
+}
+
+// ── UI updates ─────────────────────────────────────────────────
+function updateDeviceUI(connected, simMode) {
   const btn    = document.getElementById('btnConnect');
   const chip   = document.getElementById('metaStatus');
   const text   = document.getElementById('deviceStatusText');
   const btnRec = document.getElementById('btnRecord');
-  const btnAna = document.getElementById('btnAnalyze');
+  const ph     = document.getElementById('ecgPlaceholder');
 
   if (connected) {
     btn.textContent = 'Disconnect';
     btn.classList.add('active');
-    chip.innerHTML  = '<span class="ecg-dot ecg-dot-live"></span> Connected';
-    chip.style.color = '#15803d';
-    chip.style.background = '#dcfce7';
-    text.textContent = 'Arduino AD8232 — live stream active';
-    btnRec.disabled  = false;
-    document.getElementById('ecgPlaceholder').classList.add('hidden');
+    if (simMode) {
+      chip.innerHTML  = '<span class="ecg-dot ecg-dot-sim"></span> Simulation';
+      chip.style.cssText = 'color:#b45309;background:#fef9c3';
+      text.textContent = '⚡ Simulation mode — synthetic ECG signal';
+    } else {
+      chip.innerHTML  = '<span class="ecg-dot ecg-dot-live"></span> Connected';
+      chip.style.cssText = 'color:#15803d;background:#dcfce7';
+      text.textContent = 'Arduino AD8232 — live stream active';
+    }
+    btnRec.disabled = false;
+    ph.classList.add('hidden');
   } else {
     btn.textContent = 'Connect';
     btn.classList.remove('active');
     chip.innerHTML  = '<span class="ecg-dot ecg-dot-off"></span> Disconnected';
-    chip.style.color = '';
-    chip.style.background = '';
+    chip.style.cssText = '';
     text.textContent = 'No device connected';
-    btnRec.disabled  = true;
-    btnAna.disabled  = true;
-    document.getElementById('ecgPlaceholder').classList.remove('hidden');
-    document.getElementById('vHR').textContent = '—';
-    document.getElementById('vRR').textContent = '—';
-    document.getElementById('vSQ').textContent = '—';
+    btnRec.disabled = true;
+    document.getElementById('btnAnalyze').disabled = true;
+    ph.classList.remove('hidden');
+    ['vHR','vRR','vSQ'].forEach(id => document.getElementById(id).textContent = '—');
     document.getElementById('vSamples').textContent = '0';
   }
 }
@@ -806,8 +895,7 @@ function toggleRecording() {
   if (!isConnected) return;
   isRecording = !isRecording;
   if (isRecording) {
-    ecgBuffer = [];
-    t0 = Date.now();
+    ecgBuffer = []; t0 = Date.now();
     highlightRegion = null;
     document.getElementById('ecgResultArea').classList.add('hidden');
   }
@@ -818,7 +906,6 @@ function updateRecordingUI(rec) {
   const btn    = document.getElementById('btnRecord');
   const badge  = document.getElementById('recordingBadge');
   const btnAna = document.getElementById('btnAnalyze');
-
   if (rec) {
     btn.textContent = '⬛ Stop Recording';
     badge.classList.remove('hidden');
@@ -826,197 +913,228 @@ function updateRecordingUI(rec) {
   } else {
     btn.textContent = '● Start Recording';
     badge.classList.add('hidden');
-    btnAna.disabled = ecgBuffer.length === 0;
+    btnAna.disabled = ecgBuffer.length < SAMPLE_RATE * SEGMENT_DURATION;
   }
 }
 
-// ── Vitals update ──────────────────────────────────────────────
+// ── Vitals ─────────────────────────────────────────────────────
 function updateVitals() {
   const total = ecgBuffer.length;
   document.getElementById('vSamples').textContent = total.toLocaleString();
-
   const secs = Math.floor(total / SAMPLE_RATE);
   document.getElementById('axEnd').textContent = secs + 's';
   document.getElementById('axMid').textContent = Math.floor(secs / 2) + 's';
 
-  // Estimate HR from zero-crossings in last 5s
   if (total >= SAMPLE_RATE * 2) {
     const last5 = ecgBuffer.slice(-SAMPLE_RATE * 5).map(s => s.v);
-    let crossings = 0;
-    for (let i = 1; i < last5.length; i++) {
-      if (last5[i - 1] < 0.2 && last5[i] >= 0.2) crossings++;
+    let peaks = 0;
+    for (let i = 2; i < last5.length - 2; i++) {
+      if (last5[i] > 0.5 &&
+          last5[i] > last5[i-1] && last5[i] > last5[i-2] &&
+          last5[i] > last5[i+1] && last5[i] > last5[i+2]) peaks++;
     }
-    const bpm = Math.round(crossings * 12);  // crossings per 5s → per min
-    if (bpm > 30 && bpm < 220) {
+    const bpm = Math.round(peaks * 12);
+    if (bpm > 25 && bpm < 250) {
       heartRateHistory.push(bpm);
-      if (heartRateHistory.length > 10) heartRateHistory.shift();
-      const avgBPM = Math.round(heartRateHistory.reduce((a, b) => a + b) / heartRateHistory.length);
+      if (heartRateHistory.length > 8) heartRateHistory.shift();
+      const avg = Math.round(heartRateHistory.reduce((a,b)=>a+b) / heartRateHistory.length);
       const hrEl = document.getElementById('vHR');
-      hrEl.textContent = avgBPM;
-      hrEl.className = 'vital-val ' + (avgBPM < 60 || avgBPM > 100 ? 'warn' : 'ok');
-      const rr = Math.round(60000 / avgBPM);
-      document.getElementById('vRR').textContent = rr;
+      hrEl.textContent = avg;
+      hrEl.className   = 'vital-val ' + (avg < 60 || avg > 100 ? 'warn' : 'ok');
+      document.getElementById('vRR').textContent = Math.round(60000 / avg);
     }
   }
 
-  // Signal quality from recent amplitude variance
   if (total >= SAMPLE_RATE) {
-    const recent = ecgBuffer.slice(-SAMPLE_RATE).map(s => s.v);
-    const mean   = recent.reduce((a, b) => a + b) / recent.length;
-    const variance = recent.reduce((a, v) => a + (v - mean) ** 2, 0) / recent.length;
-    const sqEl   = document.getElementById('vSQ');
+    const recent   = ecgBuffer.slice(-SAMPLE_RATE).map(s => s.v);
+    const mean     = recent.reduce((a,b)=>a+b) / recent.length;
+    const variance = recent.reduce((a,v)=>a+(v-mean)**2, 0) / recent.length;
+    const sqEl     = document.getElementById('vSQ');
     if (variance < 0.01) {
       sqEl.textContent = 'Weak'; sqEl.className = 'vital-val bad';
-    } else if (variance < 0.05) {
+    } else if (variance < 0.04) {
       sqEl.textContent = 'Fair'; sqEl.className = 'vital-val warn';
     } else {
-      sqEl.textContent = 'Good'; sqEl.className = 'vital-val ok';
+      sqEl.textContent = isSimulating ? 'Simulated' : 'Good';
+      sqEl.className   = 'vital-val ok';
     }
   }
 }
 
 // ── Render loop ────────────────────────────────────────────────
 function startRenderLoop() {
-  function frame() {
-    drawEcgWaveform();
-    animFrame = requestAnimationFrame(frame);
-  }
+  function frame() { drawEcgWaveform(); animFrame = requestAnimationFrame(frame); }
   frame();
 }
 
-// ── Waveform drawing ───────────────────────────────────────────
 function drawEcgWaveform() {
   if (!ecgCtx || !ecgCanvas) return;
-  const W   = ecgCanvas.offsetWidth;
-  const H   = 180;
+  const W = ecgCanvas.offsetWidth;
+  const H = 180;
   const ctx = ecgCtx;
 
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = '#0a0f1a';
   ctx.fillRect(0, 0, W, H);
 
-  // Grid
-  ctx.strokeStyle = '#1a2a3a';
-  ctx.lineWidth   = 0.5;
-  for (let x = 0; x < W; x += 50) {
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-  }
-  for (let y = 0; y < H; y += 36) {
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-  }
+  ctx.strokeStyle = '#1a2a3a'; ctx.lineWidth = 0.5;
+  for (let x=0; x<W; x+=50) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y=0; y<H; y+=36) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
 
-  // Centre line
-  ctx.strokeStyle = '#1e3a5a';
-  ctx.lineWidth   = 0.8;
-  ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke();
+  ctx.strokeStyle = '#1e3a5a'; ctx.lineWidth = 0.8;
+  ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
 
-  // Highlight region (clicked anomaly)
   if (highlightRegion) {
     ctx.fillStyle = highlightRegion.color;
-    ctx.fillRect(highlightRegion.startPx, 0,
-      highlightRegion.endPx - highlightRegion.startPx, H);
+    ctx.fillRect(highlightRegion.startPx, 0, highlightRegion.endPx - highlightRegion.startPx, H);
   }
 
-  if (!isConnected && ecgBuffer.length === 0) {
-    // Demo / idle animation
-    drawIdleAnimation(ctx, W, H);
+  if (isSimulating && isRecording) {
+    ctx.fillStyle = 'rgba(217,119,6,0.08)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#b45309';
+    ctx.font = 'bold 10px monospace';
+    ctx.fillText('⚡ SIMULATION', 8, 16);
+  }
+
+  if (ecgBuffer.length === 0) {
+    ctx.fillStyle = '#334155'; ctx.font = '12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('No signal — connect device or start simulation', W/2, H/2);
+    ctx.textAlign = 'left';
     return;
   }
 
-  if (ecgBuffer.length === 0) return;
-
-  // Draw the most recent WAVEFORM_WINDOW_S of buffered data
   const windowSamples = WAVEFORM_WINDOW_S * SAMPLE_RATE;
   const slice = ecgBuffer.slice(-Math.min(windowSamples, ecgBuffer.length));
+  const traceColor = isSimulating ? '#f59e0b' : '#00d4aa';
 
-  ctx.strokeStyle = '#00d4aa';
-  ctx.lineWidth   = 1.5;
-  ctx.shadowColor = '#00d4aa';
-  ctx.shadowBlur  = 3;
+  ctx.strokeStyle = traceColor; ctx.lineWidth = 1.5;
+  ctx.shadowColor = traceColor; ctx.shadowBlur = 3;
   ctx.beginPath();
-
-  slice.forEach((pt, i) => {
+  for (let i=0; i<slice.length; i++) {
     const x = (i / (windowSamples - 1)) * W;
-    const y = H / 2 - pt.v * (H / 2 - 10);
+    const y = H/2 - slice[i].v * (H/2 - 10);
     i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  });
-
+  }
   ctx.stroke();
   ctx.shadowBlur = 0;
 }
 
-// Idle pulse animation when no device
-let idlePhase = 0;
-function drawIdleAnimation(ctx, W, H) {
-  idlePhase += 0.025;
-  ctx.strokeStyle = '#1e4060';
-  ctx.lineWidth   = 1.5;
-  ctx.beginPath();
-  for (let i = 0; i < W; i++) {
-    const x   = i;
-    const xN  = (i / W) * 4 + idlePhase;
-    const mod = xN % 1;
-    let y;
-    if      (mod < 0.1)  y = H / 2 - mod * 60;
-    else if (mod < 0.15) y = H / 2 - 6 + (mod - 0.1) * 20;
-    else if (mod < 0.45) y = H / 2 + 3 * Math.sin((mod - 0.15) * 30);
-    else if (mod < 0.5)  y = H / 2 - (mod - 0.45) * 320;
-    else if (mod < 0.55) y = H / 2 + 16 + (mod - 0.5) * 240;
-    else if (mod < 0.65) y = H / 2 - (mod - 0.55) * 80;
-    else                  y = H / 2;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-}
-
 // ── ML Analysis ────────────────────────────────────────────────
 async function runEcgAnalysis() {
-  if (ecgBuffer.length < SAMPLE_RATE * SEGMENT_DURATION) {
-    alert(`Need at least ${SEGMENT_DURATION}s of recorded data. Currently have ${Math.floor(ecgBuffer.length / SAMPLE_RATE)}s.`);
+  const minSamples = SAMPLE_RATE * SEGMENT_DURATION;
+  if (ecgBuffer.length < minSamples) {
+    const have = Math.floor(ecgBuffer.length / SAMPLE_RATE);
+    alert(`Need at least ${SEGMENT_DURATION}s of data. You have ${have}s.\n\nPress "Start Recording", wait ${SEGMENT_DURATION}s, then press "Stop Recording".`);
     return;
   }
 
   const userId = localStorage.getItem('userId');
   const btn    = document.getElementById('btnAnalyze');
-  btn.textContent = 'Analysing…';
-  btn.disabled    = true;
+  btn.textContent = 'Analysing…'; btn.disabled = true;
 
   try {
     const res = await fetch(`${API}/api/ecg/analyze`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        user_id:          userId,
+        user_id:          userId || 'sim-user',
         samples:          ecgBuffer.map(s => s.v),
         sample_rate:      SAMPLE_RATE,
         segment_duration: SEGMENT_DURATION,
       }),
     });
-
-    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    if (!res.ok) throw new Error(`Server ${res.status}`);
     const result = await res.json();
     lastAnalysis = result;
     displayEcgResult(result);
-
   } catch (err) {
-    console.error('ECG analysis failed', err);
-    alert('ECG analysis failed. Check that the backend is running.');
+    console.warn('Backend unreachable — using offline mock:', err);
+    const mock = buildOfflineMockResult(userId);
+    lastAnalysis = mock;
+    displayEcgResult(mock);
   } finally {
-    btn.textContent = 'Run ML Analysis';
-    btn.disabled    = false;
+    btn.textContent = 'Run ML Analysis'; btn.disabled = false;
   }
 }
 
-// ── Display ML result ──────────────────────────────────────────
+// ── Offline mock result ────────────────────────────────────────
+function buildOfflineMockResult(userId) {
+  const totalSamples = ecgBuffer.length;
+  const segSize      = SAMPLE_RATE * SEGMENT_DURATION;
+  const segments     = [];
+
+  const biasMap = {
+    normal:      ['Normal','Normal','Normal','Supraventricular'],
+    tachycardia: ['Supraventricular','Supraventricular','Normal'],
+    bradycardia: ['Conduction','Normal','Supraventricular'],
+    af:          ['AF','AF','Supraventricular','Ventricular'],
+    ventricular: ['Ventricular','Ventricular','AF','Supraventricular'],
+    mixed:       ['Supraventricular','Normal','AF','Ventricular','Conduction','Supraventricular'],
+  };
+  const pool = biasMap[simScenario] || biasMap.mixed;
+
+  for (let i=0, seg=1; i<totalSamples; i+=segSize, seg++) {
+    if (i + segSize/2 > totalSamples) break;
+    const condition  = pool[Math.floor(Math.random() * pool.length)];
+    const confidence = +(35 + Math.random() * 30).toFixed(1);
+    segments.push({
+      segment: seg,
+      start_s: +(i / SAMPLE_RATE).toFixed(1),
+      end_s:   +((i + segSize) / SAMPLE_RATE).toFixed(1),
+      condition, confidence,
+      status: condition === 'Normal' ? 'Normal' : 'Abnormal',
+      color:  CONDITION_COLORS[condition],
+    });
+  }
+
+  if (!segments.length) segments.push({
+    segment:1, start_s:0, end_s:10, condition:'Normal',
+    confidence:42.0, status:'Normal', color:CONDITION_COLORS['Normal']
+  });
+
+  const total   = segments.length;
+  const normSeg = segments.filter(s=>s.status==='Normal').length;
+  const abnSeg  = total - normSeg;
+  const condCounts = {};
+  segments.forEach(s => condCounts[s.condition] = (condCounts[s.condition]||0)+1);
+  const primary = Object.entries(condCounts).sort((a,b)=>b[1]-a[1])[0][0];
+  const avgConf = +(segments.reduce((a,s)=>a+s.confidence,0)/total).toFixed(1);
+  const abnPct  = +(abnSeg/total*100).toFixed(1);
+  const overall = abnPct >= 80 ? 'Critical' : abnPct >= 30 ? 'Warning' : 'Normal';
+
+  const condProba = {};
+  Object.keys(CONDITION_COLORS).forEach(c =>
+    condProba[c] = +(((condCounts[c]||0)/total)*100).toFixed(1));
+
+  const anomalySummary = Object.entries(condCounts)
+    .filter(([c])=>c!=='Normal').sort((a,b)=>b[1]-a[1])
+    .map(([c,cnt])=>({
+      name: c, count: cnt, pct: +(cnt/total*100).toFixed(1),
+      severity: ['Ventricular','AF'].includes(c) ? 'Critical'
+               : ['Supraventricular','Conduction'].includes(c) ? 'Warning' : 'Info',
+      color: CONDITION_COLORS[c],
+    }));
+
+  return {
+    overall_status: overall, primary_condition: primary, avg_confidence: avgConf,
+    normal_pct: +(normSeg/total*100).toFixed(1), abnormal_pct: abnPct,
+    total_segments: total, normal_segments: normSeg, abnormal_segments: abnSeg,
+    signal_quality: 'Simulated', model_version: 'OFFLINE-SIM',
+    duration_seconds: +(totalSamples/SAMPLE_RATE).toFixed(1),
+    segments, condition_proba: condProba, anomaly_summary: anomalySummary,
+    analysed_at: new Date().toISOString(), simulated: true,
+  };
+}
+
+// ── Display result ─────────────────────────────────────────────
 function displayEcgResult(result) {
   document.getElementById('ecgResultArea').classList.remove('hidden');
 
-  // Status badge
   const badge = document.getElementById('ecgStatusBadge');
-  badge.textContent = result.overall_status;
+  badge.textContent = result.overall_status + (result.simulated ? ' (simulated)' : '');
   badge.className   = 'ecg-status-badge ecg-status-' + result.overall_status.toLowerCase();
 
-  // Summary meta
   document.getElementById('ecgPrimaryCondition').textContent = result.primary_condition;
   document.getElementById('ecgConfidence').textContent       = result.avg_confidence + '%';
   document.getElementById('ecgNormalSegs').textContent       = `${result.normal_segments} / ${result.total_segments}`;
@@ -1024,84 +1142,65 @@ function displayEcgResult(result) {
   document.getElementById('ecgDuration').textContent         = result.duration_seconds + 's';
   document.getElementById('ecgSignalQuality').textContent    = result.signal_quality;
 
-  // Verdict bar
   document.getElementById('ecgVerdictBar').innerHTML = `
     <div class="vrow"><span>Assessment</span><span class="vval">${result.primary_condition}</span></div>
     <div class="vrow"><span>Normal</span><span class="vval">${result.normal_pct}% (${result.normal_segments}/${result.total_segments})</span></div>
     <div class="vrow"><span>Abnormal</span><span class="vval">${result.abnormal_pct}% (${result.abnormal_segments}/${result.total_segments})</span></div>
+    ${result.simulated ? '<div class="vrow" style="color:#f59e0b"><span>Mode</span><span class="vval">⚡ Offline simulation</span></div>' : ''}
   `;
 
-  // Prediction timeline bars
   buildSegmentBar(result.segments);
-
-  // Anomaly list
-  buildAnomalyList(result.anomaly_summary, result.segments);
-
-  // Probability bars
+  buildAnomalyList(result.anomaly_summary);
   buildProbBars(result.condition_proba);
-
-  // Segment table
   buildSegmentTable(result.segments);
 
-  // Alert banner
   const hasCritical = result.anomaly_summary.some(a => a.severity === 'Critical');
   const alertBanner = document.getElementById('ecgAlertBanner');
-  if (hasCritical || result.overall_status === 'Critical') {
+  if (!result.simulated && (hasCritical || result.overall_status === 'Critical')) {
     alertBanner.classList.remove('hidden');
-    document.getElementById('ecgAlertTitle').textContent =
-      hasCritical ? 'Critical Anomaly Detected — Seek immediate medical attention' : 'Critical ECG Pattern Detected';
-    document.getElementById('ecgAlertDesc').textContent =
-      'Contact your physician or emergency services immediately.';
-  } else if (result.overall_status === 'Warning') {
+    document.getElementById('ecgAlertTitle').textContent = 'Critical Anomaly Detected';
+    document.getElementById('ecgAlertDesc').textContent  = 'Contact your physician or emergency services immediately.';
+  } else if (!result.simulated && result.overall_status === 'Warning') {
     alertBanner.classList.remove('hidden');
     document.getElementById('ecgAlertTitle').textContent = 'Cardiac Warning — Review Required';
-    document.getElementById('ecgAlertDesc').textContent  =
-      'Anomalies detected. Schedule a consultation with your cardiologist.';
+    document.getElementById('ecgAlertDesc').textContent  = 'Anomalies detected. Schedule a consultation with your cardiologist.';
   } else {
     alertBanner.classList.add('hidden');
   }
 
-  // Scroll into view
-  document.getElementById('ecgResultArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('ecgResultArea').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
 // ── Prediction timeline bar ────────────────────────────────────
 function buildSegmentBar(segments) {
-  const bar     = document.getElementById('ecgSegBar');
-  const lblRow  = document.getElementById('ecgSegLabels');
-  const legend  = document.getElementById('ecgLegend');
-
+  const bar    = document.getElementById('ecgSegBar');
+  const lblRow = document.getElementById('ecgSegLabels');
+  const legend = document.getElementById('ecgLegend');
   bar.innerHTML = lblRow.innerHTML = '';
 
-  // Legend (unique conditions)
-  const seen = new Set();
-  segments.forEach(s => seen.add(s.condition));
-  legend.innerHTML = [...seen].map(c => `
+  const seen = new Set(segments.map(s=>s.condition));
+  legend.innerHTML = [...seen].map(c=>`
     <div class="ecg-legend-item">
-      <div class="ecg-legend-dot" style="background:${CONDITION_COLORS[c] || '#888'}"></div>
-      ${c}
-    </div>
-  `).join('');
+      <div class="ecg-legend-dot" style="background:${CONDITION_COLORS[c]||'#888'}"></div>${c}
+    </div>`).join('');
 
-  segments.forEach((s, i) => {
+  segments.forEach((s,i) => {
     const block = document.createElement('div');
     block.className = 'ecg-seg-block';
     block.style.background = CONDITION_COLORS[s.condition] || '#888';
-    block.title = `${s.segment}: ${s.start_s}s–${s.end_s}s | ${s.condition} ${s.confidence}%`;
+    block.title = `#${s.segment}: ${s.start_s}s–${s.end_s}s | ${s.condition} ${s.confidence}%`;
     block.textContent = Math.round(s.confidence) + '%';
     block.onclick = () => highlightSegment(s, i, segments.length);
     bar.appendChild(block);
-
     const lbl = document.createElement('span');
     lbl.textContent = (i % 5 === 0) ? s.start_s + 's' : '';
     lblRow.appendChild(lbl);
   });
 }
 
-// ── Anomaly list ───────────────────────────────────────────────
-function buildAnomalyList(anomalySummary, segments) {
+function buildAnomalyList(anomalySummary) {
   const el = document.getElementById('ecgAnomalyList');
-  if (!anomalySummary || anomalySummary.length === 0) {
+  if (!anomalySummary || !anomalySummary.length) {
     el.innerHTML = '<p style="font-size:.82rem;color:#64748B;">No significant anomalies detected.</p>';
     return;
   }
@@ -1112,68 +1211,61 @@ function buildAnomalyList(anomalySummary, segments) {
         <div class="ecg-anomaly-time">${a.count} segment(s) — ${a.pct}% of recording</div>
       </div>
       <span class="ecg-sev-badge ecg-sev-${a.severity.toLowerCase()}">${a.severity}</span>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-// ── Probability bars ───────────────────────────────────────────
 function buildProbBars(conditionProba) {
-  const el = document.getElementById('ecgProbBars');
-  const sorted = Object.entries(conditionProba).sort((a, b) => b[1] - a[1]);
-  el.innerHTML = sorted.map(([name, pct]) => `
-    <div class="ecg-prob-row">
-      <div class="ecg-prob-label-row">
-        <span>${name}</span>
-        <span style="color:${CONDITION_COLORS[name] || '#888'}">${pct}%</span>
-      </div>
-      <div class="ecg-prob-track">
-        <div class="ecg-prob-fill"
-          style="width:${Math.min(pct * 4, 100)}%;background:${CONDITION_COLORS[name] || '#888'}">
+  document.getElementById('ecgProbBars').innerHTML = Object.entries(conditionProba)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([name, pct]) => `
+      <div class="ecg-prob-row">
+        <div class="ecg-prob-label-row">
+          <span>${name}</span>
+          <span style="color:${CONDITION_COLORS[name]||'#888'}">${pct}%</span>
         </div>
-      </div>
-    </div>
-  `).join('');
+        <div class="ecg-prob-track">
+          <div class="ecg-prob-fill"
+            style="width:${Math.min(pct*4,100)}%;background:${CONDITION_COLORS[name]||'#888'}">
+          </div>
+        </div>
+      </div>`).join('');
 }
 
-// ── Segment table ──────────────────────────────────────────────
 function buildSegmentTable(segments) {
-  const tbody = document.getElementById('ecgSegTableBody');
-  tbody.innerHTML = segments.map(s => `
-    <tr class="seg-${s.status.toLowerCase()}" onclick="highlightSegment(s, ${s.segment - 1}, ${segments.length})" style="cursor:pointer">
+  document.getElementById('ecgSegTableBody').innerHTML = segments.map((s,i) => `
+    <tr class="seg-${s.status.toLowerCase()}"
+        onclick="highlightSegment(${JSON.stringify(s).replace(/"/g,"'")}, ${i}, ${segments.length})"
+        style="cursor:pointer">
       <td>#${s.segment}</td>
       <td>${s.start_s}s</td>
       <td>${s.end_s}s</td>
       <td>
         <span style="display:inline-flex;align-items:center;gap:5px">
-          <span style="width:8px;height:8px;border-radius:2px;background:${CONDITION_COLORS[s.condition] || '#888'};display:inline-block"></span>
+          <span style="width:8px;height:8px;border-radius:2px;
+            background:${CONDITION_COLORS[s.condition]||'#888'};display:inline-block"></span>
           ${s.condition}
         </span>
       </td>
       <td>${s.confidence}%</td>
       <td class="seg-status-${s.status.toLowerCase()}">${s.status}</td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-// ── Highlight waveform region ──────────────────────────────────
 function highlightSegment(seg, idx, total) {
   if (!ecgCanvas) return;
   const W = ecgCanvas.offsetWidth;
   const startPx = (idx / total) * W;
   const endPx   = ((idx + 1) / total) * W;
-  const sev     = seg.status === 'Normal' ? 'rgba(34,197,94,0.15)' :
-                  (seg.condition === 'Ventricular' || seg.condition === 'AF')
-                    ? 'rgba(239,68,68,0.25)' : 'rgba(245,158,11,0.2)';
-  highlightRegion = { startPx, endPx, color: sev };
+  const color   = seg.status === 'Normal'
+    ? 'rgba(34,197,94,0.15)'
+    : ['Ventricular','AF'].includes(seg.condition)
+      ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.2)';
+  highlightRegion = { startPx, endPx, color };
   setTimeout(() => { highlightRegion = null; }, 3000);
 }
 
-// ── Dismiss alert ──────────────────────────────────────────────
-function dismissAlert() {
-  document.getElementById('ecgAlertBanner').classList.add('hidden');
-}
+function dismissAlert() { document.getElementById('ecgAlertBanner').classList.add('hidden'); }
 
-// ── Heart tab switcher ─────────────────────────────────────────
 function showHeartTab(tabId, btn) {
   document.querySelectorAll('.heart-tab-content').forEach(t => t.classList.add('hidden'));
   document.getElementById(tabId).classList.remove('hidden');
@@ -1182,30 +1274,25 @@ function showHeartTab(tabId, btn) {
   if (tabId === 'ecg-history') loadEcgHistory();
 }
 
-// ── ECG History ────────────────────────────────────────────────
 async function loadEcgHistory() {
-  const userId  = localStorage.getItem('userId');
-  const histEl  = document.getElementById('ecgHistoryList');
+  const userId = localStorage.getItem('userId');
+  const histEl = document.getElementById('ecgHistoryList');
   if (!histEl) return;
-
   try {
     const res     = await fetch(`${API}/api/ecg/history/${userId}`);
     const records = await res.json();
-
     if (!records.length) {
       histEl.innerHTML = '<p style="color:#64748B;font-size:.875rem;">No ECG sessions recorded yet.</p>';
       return;
     }
-
     histEl.innerHTML = records.map(r => {
       const anomalies = Array.isArray(r.anomaly_summary) ? r.anomaly_summary : [];
       return `
         <div class="ecg-history-item">
           <div class="ecg-history-header">
             <div style="display:flex;align-items:center;gap:.75rem">
-              <span class="ecg-status-badge ecg-status-${r.overall_status.toLowerCase()}" style="font-size:.75rem;padding:.25rem .75rem">
-                ${r.overall_status}
-              </span>
+              <span class="ecg-status-badge ecg-status-${r.overall_status.toLowerCase()}"
+                    style="font-size:.75rem;padding:.25rem .75rem">${r.overall_status}</span>
               <div>
                 <div style="font-weight:600;font-size:.9rem">${r.primary_condition}</div>
                 <div style="font-size:.75rem;color:#64748B">${new Date(r.created_at).toLocaleString()}</div>
@@ -1226,37 +1313,36 @@ async function loadEcgHistory() {
           <div style="font-size:.72rem;color:#94a3b8;margin-top:.35rem">
             Signal: ${r.signal_quality} · Model: ${r.model_version}
           </div>
-        </div>
-      `;
+        </div>`;
     }).join('');
-
-  } catch (err) {
-    console.error('ECG history load failed', err);
-    histEl.innerHTML = '<p style="color:#64748B;font-size:.875rem;">Could not load ECG history.</p>';
+  } catch {
+    histEl.innerHTML = '<p style="color:#64748B;font-size:.875rem;">Could not load ECG history. (Backend may not be running)</p>';
   }
 }
 
-// ── Generate PDF report ────────────────────────────────────────
 async function generateEcgReport() {
   if (!lastAnalysis) return alert('No analysis available to export.');
-  const userId = localStorage.getItem('userId');
   try {
     const res = await fetch(`${API}/api/ecg-report`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ user_id: userId, analysis: lastAnalysis }),
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: localStorage.getItem('userId'), analysis: lastAnalysis }),
     });
-    if (!res.ok) throw new Error(`Server error ${res.status}`);
+    if (!res.ok) throw new Error();
     const blob = await res.blob();
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
-    a.href     = url;
-    a.download = `ECG_Report_${userId}_${Date.now()}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error('Report generation failed', err);
-    alert('Report generation failed. Check the backend.');
+    a.href = url; a.download = `ECG_Report_${Date.now()}.pdf`;
+    a.click(); URL.revokeObjectURL(url);
+  } catch {
+    alert('Report generation failed or backend not running.');
   }
+}
+
+function injectSimDotStyle() {
+  if (document.getElementById('simDotStyle')) return;
+  const s = document.createElement('style');
+  s.id = 'simDotStyle';
+  s.textContent = '.ecg-dot-sim{background:#f59e0b;animation:ecgPulse 1s ease-in-out infinite}';
+  document.head.appendChild(s);
 }
 
