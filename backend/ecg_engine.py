@@ -2,8 +2,7 @@
 #  ecg_engine.py
 #  Place this file in your backend/ folder (same folder as app.py)
 #
-#  This is the ML core extracted from your friend's predict_master.py.
-#  Nothing about the model logic is changed — we just made it
+#  Nothing about the model logic is changed from predict_master.py — we just made it
 #  importable so FastAPI can call it.
 # ================================================================
 
