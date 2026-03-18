@@ -52,8 +52,7 @@ function showSection(sectionId) {
     });
 
     if (sectionId === 'manage-patients') {
-        loadAllPatients('A');
-        loadAllPatients('B');
+        loadDocPatientSidebar();
     }
 
     if (sectionId === 'heart-monitor') {
@@ -814,7 +813,6 @@ function startSimulation() {
 
   simInterval = setInterval(() => {
     if (!isConnected) { clearInterval(simInterval); return; }
-    if (!isRecording) { simPhase += 0.001; return; }
 
     const scenario = SIM_SCENARIOS[simScenario] || SIM_SCENARIOS.mixed;
     const beatsPerSec = scenario.bpm / 60;
@@ -824,20 +822,32 @@ function startSimulation() {
 
       let shape = scenario.shape;
       if (simScenario === 'mixed') {
-        const elapsed = ecgBuffer.length / SAMPLE_RATE;
-        shape = elapsed < 20  ? 'normal'
-               : elapsed < 40 ? 'tachy'
-               : elapsed < 60 ? 'af'
-               : elapsed < 80 ? 'ventr'
-               : elapsed < 100 ? 'normal'
+        // Use a rolling preview buffer length for shape, not ecgBuffer
+        shape = simPhase < 20  ? 'normal'
+               : simPhase < 40 ? 'tachy'
+               : simPhase < 60 ? 'af'
+               : simPhase < 80 ? 'ventr'
+               : simPhase < 100 ? 'normal'
                : 'af';
       }
 
       const raw   = ecgSample(simPhase, shape);
       const noise = (Math.random() - 0.5) * scenario.noise;
-      ecgBuffer.push({ t: Date.now() - t0, v: Math.max(-1, Math.min(1, raw + noise)) });
+      const sample = { t: Date.now() - t0, v: Math.max(-1, Math.min(1, raw + noise)) };
+
+      // Always push to a preview buffer for vitals display
+      if (!window._simPreviewBuf) window._simPreviewBuf = [];
+      window._simPreviewBuf.push(sample);
+      if (window._simPreviewBuf.length > SAMPLE_RATE * 10) window._simPreviewBuf.shift();
+
+      // Only push to recording buffer when actually recording
+      if (isRecording) {
+        ecgBuffer.push(sample);
+      }
     }
-    trimBuffer(); updateVitals();
+
+    trimBuffer();
+    updateVitals(); // always update vitals regardless of recording
   }, MS_PER_BATCH);
 }
 
@@ -925,8 +935,13 @@ function updateVitals() {
   document.getElementById('axEnd').textContent = secs + 's';
   document.getElementById('axMid').textContent = Math.floor(secs / 2) + 's';
 
-  if (total >= SAMPLE_RATE * 2) {
-    const last5 = ecgBuffer.slice(-SAMPLE_RATE * 5).map(s => s.v);
+  // Use preview buffer for vitals when not recording, so HR/RR always shows
+  const vitalsSource = (isRecording || !isSimulating)
+    ? ecgBuffer
+    : (window._simPreviewBuf || []);
+
+  if (vitalsSource.length >= SAMPLE_RATE * 2) {
+    const last5 = vitalsSource.slice(-SAMPLE_RATE * 5).map(s => s.v);
     let peaks = 0;
     for (let i = 2; i < last5.length - 2; i++) {
       if (last5[i] > 0.5 &&
@@ -945,8 +960,8 @@ function updateVitals() {
     }
   }
 
-  if (total >= SAMPLE_RATE) {
-    const recent   = ecgBuffer.slice(-SAMPLE_RATE).map(s => s.v);
+  if (vitalsSource.length >= SAMPLE_RATE) {
+    const recent   = vitalsSource.slice(-SAMPLE_RATE).map(s => s.v);
     const mean     = recent.reduce((a,b)=>a+b) / recent.length;
     const variance = recent.reduce((a,v)=>a+(v-mean)**2, 0) / recent.length;
     const sqEl     = document.getElementById('vSQ');
@@ -1346,3 +1361,282 @@ function injectSimDotStyle() {
   document.head.appendChild(s);
 }
 
+// ── Doctor Patient Checkup — full-page layout ────────────────────────────────
+
+let docAllPatients  = [];   // full list from API
+let docSelectedId   = null; // currently selected patient ID
+
+// Called when manage-patients section opens
+async function loadDocPatientSidebar() {
+  const list = document.getElementById('docPatientList');
+  list.innerHTML = '<p class="doc-list-empty">Loading…</p>';
+
+  try {
+    // doctor-patient-list returns ALL patients unconditionally
+    const res  = await fetch('http://127.0.0.1:8000/api/doctor-patient-list');
+    const data = await res.json();
+
+    docAllPatients = data.map(p => ({
+      user_id:        p.id_str,
+      name:           p.name,
+      latest_disease: p.latest_disease || null,
+      latest_risk:    p.latest_risk    || null
+    }));
+
+    renderDocPatientList(docAllPatients);
+  } catch (err) {
+    list.innerHTML = '<p class="doc-list-empty">Could not load patients.</p>';
+    console.error(err);
+  }
+}
+
+function renderDocPatientList(patients) {
+  const list = document.getElementById('docPatientList');
+  if (!patients.length) {
+    list.innerHTML = '<p class="doc-list-empty">No patients found.</p>';
+    return;
+  }
+  list.innerHTML = patients.map(p => {
+    const riskColor = !p.latest_risk     ? '#94A3B8'
+                    : p.latest_risk > 70  ? '#DC2626'
+                    : p.latest_risk > 40  ? '#B45309'
+                    :                       '#15803D';
+    const riskTag = p.latest_disease
+      ? `<span style="font-size:.68rem;font-weight:600;color:${riskColor}">
+           ${p.latest_disease}${p.latest_risk ? ' · ' + p.latest_risk + '%' : ''}
+         </span>`
+      : `<span style="font-size:.68rem;color:#CBD5E1">No records yet</span>`;
+
+    return `
+      <div class="doc-patient-item ${p.user_id === docSelectedId ? 'active' : ''}"
+           onclick="selectDocPatient('${p.user_id}', '${p.name}', this)">
+        <div class="doc-p-avatar">${p.name[0].toUpperCase()}</div>
+        <div class="doc-p-info">
+          <h5>${p.name}</h5>
+          <p>${p.user_id}</p>
+          ${riskTag}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function filterDocPatients() {
+  const q = document.getElementById('docPatientSearch').value.trim();
+
+  // Empty search → show full cached list
+  if (!q) { renderDocPatientList(docAllPatients); return; }
+
+  // Live search against API, normalize shape to match renderer
+  try {
+    const res  = await fetch(`http://127.0.0.1:8000/api/search-patient?q=${encodeURIComponent(q)}`);
+    const data = await res.json();
+    const normalized = data.map(p => ({
+      user_id:        p.id_str,
+      name:           p.name,
+      latest_disease: p.latest_disease || null,
+      latest_risk:    p.latest_risk    || null
+    }));
+    renderDocPatientList(normalized);
+  } catch (err) {
+    console.error('Search failed', err);
+  }
+}
+
+async function selectDocPatient(patientId, patientName, el) {
+  // Update active state in list
+  document.querySelectorAll('.doc-patient-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+
+  docSelectedId = patientId;
+
+  // Show profile content, hide empty state
+  document.getElementById('docProfileEmpty').classList.add('hidden');
+  document.getElementById('docProfileContent').classList.remove('hidden');
+
+  // Fill header
+  document.getElementById('docProfileName').textContent = patientName;
+  document.getElementById('docProfileId').textContent   = `ID: ${patientId}`;
+  document.getElementById('docProfileAvatar').textContent = patientName[0].toUpperCase();
+
+  // Reset to vitals tab
+  showDocTab('vitals', document.querySelector('.doc-ptab'));
+
+  // Load data
+  await loadDocPatientVitals(patientId);
+  await loadDocPatientEcg(patientId);
+}
+
+function showDocTab(tabId, btn) {
+  document.querySelectorAll('.doc-ptab-content').forEach(t => t.classList.add('hidden'));
+  document.querySelectorAll('.doc-ptab').forEach(b => b.classList.remove('active'));
+  document.getElementById(`doc-tab-${tabId}`).classList.remove('hidden');
+  btn.classList.add('active');
+}
+
+async function loadDocPatientVitals(patientId) {
+  try {
+    const res  = await fetch(`${API}/api/reports/${patientId}`);
+    const data = await res.json();
+
+    // Build tags from latest report
+    const tags   = document.getElementById('docProfileTags');
+    tags.innerHTML = '';
+    if (data.length > 0) {
+      const latest = data[0];
+      const risk   = parseFloat(latest.analysis_score);
+      const cls    = risk > 70 ? 'danger' : risk > 40 ? 'warn' : '';
+      tags.innerHTML  = `<span class="doc-tag ${cls}">${latest.result_status}</span>`;
+      tags.innerHTML += `<span class="doc-tag ${cls}">Risk: ${risk}%</span>`;
+    }
+
+    // Build chart arrays
+    const labels = data.map((_, i) => `#${data.length - i}`).reverse();
+    const temps  = data.map(r => r.temperature).reverse();
+    const hrs    = data.map(r => r.heart_rate).reverse();
+    const sysBP  = data.map(r => r.bp_sys).reverse();
+    const diaBP  = data.map(r => r.bp_dia).reverse();
+    const syms   = data.map(r =>
+      (r.fever||0)+(r.cough||0)+(r.chest_pain||0)+(r.shortness_breath||0)+(r.fatigue||0)+(r.headache||0)
+    ).reverse();
+
+    buildDocChart('docChart_temp',     labels, temps,  'Temperature (°C)', '#EF4444');
+    buildDocChart('docChart_hr',       labels, hrs,    'Heart Rate (BPM)', '#3B82F6');
+    buildDocChart('docChart_bp',       labels, sysBP,  'Systolic BP',      '#8B5CF6',
+                                       diaBP, 'Diastolic BP',             '#A78BFA');
+    buildDocChart('docChart_symptoms', labels, syms,   'Symptom Score',    '#F59E0B');
+
+    // History vault
+    const vault = document.getElementById('docProfileHistory');
+    vault.innerHTML = data.slice(0, 10).map(r => `
+      <div style="padding:.6rem 0;border-bottom:1px solid #F1F5F9;font-size:.8rem">
+        <strong>${r.result_status}</strong> — Risk: ${r.analysis_score}%
+        <br/><span style="color:#64748B">Drugs: ${r.suggested_drugs || '—'}</span>
+        <br/><span style="color:#64748B">Foods: ${r.suggested_foods || '—'}</span>
+      </div>
+    `).join('') || '<p style="color:#94A3B8;font-size:.82rem">No history found.</p>';
+
+  } catch (err) { console.error('Vitals load failed', err); }
+}
+
+function buildDocChart(canvasId, labels, data1, label1, color1, data2, label2, color2) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  if (canvas._chartInst) canvas._chartInst.destroy();
+  const datasets = [{
+    label: label1, data: data1, borderColor: color1,
+    backgroundColor: color1 + '22', tension: .35, fill: true, pointRadius: 3
+  }];
+  if (data2) datasets.push({
+    label: label2, data: data2, borderColor: color2,
+    backgroundColor: color2 + '22', tension: .35, fill: false, pointRadius: 3
+  });
+  canvas._chartInst = new Chart(canvas, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { font: { size: 10 } } } },
+      scales: { x: { ticks: { font: { size: 9 } } }, y: { ticks: { font: { size: 9 } } } }
+    }
+  });
+}
+
+async function loadDocPatientEcg(patientId) {
+  // Load ECG history for this patient
+  const histDiv = document.getElementById('docEcgHistoryList');
+  const tbody   = document.getElementById('docAnomalyTableBody');
+  const verdict = document.getElementById('docVerdictBar');
+
+  histDiv.innerHTML = '<p style="color:#64748B;font-size:.875rem;">Loading ECG history…</p>';
+  tbody.innerHTML   = '<tr><td colspan="6" style="text-align:center;color:#94A3B8">Loading…</td></tr>';
+
+  try {
+    const res  = await fetch(`${API}/api/ecg/history/${patientId}`);
+    const data = await res.json();
+
+    if (!data.length) {
+      histDiv.innerHTML = '<p style="color:#64748B;font-size:.875rem;">No ECG sessions recorded yet.</p>';
+      tbody.innerHTML   = '<tr><td colspan="6" style="text-align:center;color:#94A3B8">No data</td></tr>';
+      return;
+    }
+
+    // Render history cards
+    histDiv.innerHTML = data.map(r => `
+      <div class="ecg-history-card">
+        <div class="ecg-history-top">
+          <span class="ecg-history-label
+            ${r.overall_status === 'Normal' ? 'ecg-pill-normal' : 'ecg-pill-abnormal'}">
+            ${r.overall_status}
+          </span>
+          <span class="ecg-history-date">${new Date(r.analysed_at).toLocaleString()}</span>
+        </div>
+        <p style="font-size:.75rem;color:#64748B;margin-top:.3rem">
+          Primary: ${r.primary_condition || '—'} &nbsp;|&nbsp;
+          Confidence: ${r.confidence || '—'}% &nbsp;|&nbsp;
+          Quality: ${r.signal_quality || '—'}
+        </p>
+      </div>
+    `).join('');
+
+    // Build HR trend from sessions
+    const hrLabels = data.map((_, i) => `Session ${data.length - i}`).reverse();
+    const hrValues = data.map(r => parseFloat(r.avg_heart_rate) || 0).reverse();
+    buildDocChart('docEcgHRChart', hrLabels, hrValues, 'Avg Heart Rate (BPM)', '#3B82F6');
+
+    // Anomaly log from MOST RECENT session
+    const latest = data[0];
+    if (latest.segments && latest.segments.length) {
+      tbody.innerHTML = latest.segments.map((seg, i) => `
+        <tr>
+          <td>#${i+1}</td>
+          <td>${seg.start_time}s</td>
+          <td>${seg.end_time}s</td>
+          <td>${seg.prediction}</td>
+          <td>${(seg.confidence * 100).toFixed(1)}%</td>
+          <td style="color:${seg.prediction === 'Normal' ? '#15803D' : '#DC2626'};font-weight:600">
+            ${seg.prediction === 'Normal' ? 'Normal' : 'Abnormal'}
+          </td>
+        </tr>
+      `).join('');
+
+      // Verdict bar
+      const abnormal = latest.segments.filter(s => s.prediction !== 'Normal').length;
+      const pct      = Math.round((abnormal / latest.segments.length) * 100);
+      verdict.innerHTML = `
+        <div style="font-size:.8rem;color:#64748B;margin-bottom:.3rem">
+          Abnormal segments: ${abnormal}/${latest.segments.length} (${pct}%)
+        </div>
+        <div style="background:#F1F5F9;border-radius:8px;height:10px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${pct>60?'#DC2626':pct>30?'#F59E0B':'#1D9E75'};
+               border-radius:8px;transition:width .5s"></div>
+        </div>`;
+    } else {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#94A3B8">No segment data in last session</td></tr>';
+    }
+
+  } catch (err) {
+    console.error('ECG history load failed', err);
+    histDiv.innerHTML = '<p style="color:#64748B;font-size:.875rem;">Could not load ECG history.</p>';
+  }
+}
+
+async function sendAdviceFromProfile() {
+  if (!docSelectedId) return alert('No patient selected.');
+  const msg = document.getElementById('docProfileMsg').value.trim();
+  if (!msg) { showDocTab('message', document.querySelectorAll('.doc-ptab')[2]); return; }
+
+  try {
+    await fetch('http://127.0.0.1:8000/api/send-feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patient_id: docSelectedId,
+        message:    msg,
+        doctor_id:  localStorage.getItem('userId')
+      })
+    });
+    document.getElementById('docProfileMsg').value = '';
+    alert('Message sent successfully!');
+  } catch (err) { console.error('Message send failed', err); }
+}

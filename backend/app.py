@@ -756,6 +756,53 @@ def _mock_segments(samples, sample_rate, segment_duration):
         })
     return segments
  
+@app.get("/api/ecg/history/doctor/{patient_id}")
+async def get_ecg_history_for_doctor(patient_id: str):
+    """
+    Same as the patient ECG history but also includes
+    segment_predictions so the doctor's anomaly log table
+    can be populated.
+    """
+    db     = get_db()
+    cursor = db.cursor(dictionary=True)
+    try:
+        cursor.execute("""
+            SELECT e.id, e.overall_status, e.primary_condition, e.avg_confidence,
+                   e.normal_pct, e.abnormal_pct, e.total_segments, e.signal_quality,
+                   e.model_version, e.duration_seconds, e.created_at,
+                   e.anomaly_summary, e.segment_predictions
+            FROM   ecg_sessions e
+            JOIN   users u ON e.user_id = u.id
+            WHERE  u.id_str = %s
+            ORDER  BY e.created_at DESC
+            LIMIT  50
+        """, (patient_id,))
+        rows = cursor.fetchall()
+
+        for r in rows:
+            # Serialize datetime
+            r["created_at"] = r["created_at"].isoformat() if r["created_at"] else None
+
+            # Parse anomaly_summary JSON string → list
+            if isinstance(r["anomaly_summary"], str):
+                try:    r["anomaly_summary"] = json.loads(r["anomaly_summary"])
+                except: r["anomaly_summary"] = []
+
+            # Parse segment_predictions JSON string → list
+            # Rename to "segments" so frontend matches existing shape
+            raw_segs = r.pop("segment_predictions", None)
+            if isinstance(raw_segs, str):
+                try:    r["segments"] = json.loads(raw_segs)
+                except: r["segments"] = []
+            elif isinstance(raw_segs, list):
+                r["segments"] = raw_segs
+            else:
+                r["segments"] = []
+
+        return rows
+    finally:
+        cursor.close()
+        db.close()
 
         
 if __name__ == "__main__":

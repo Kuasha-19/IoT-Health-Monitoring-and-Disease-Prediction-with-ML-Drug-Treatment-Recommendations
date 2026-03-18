@@ -42,10 +42,10 @@
         </div>
 
         <!-- Doctor links -->
+        <!-- Doctor links -->
         <div id="doctorLinks" class="hidden">
           <a href="#" class="nav-link" onclick="showSection('overview')">Overview</a>
           <a href="#" class="nav-link" onclick="showSection('manage-patients')">Patient Checkup</a>
-          <a href="#" class="nav-link" onclick="showSection('heart-monitor')">Heart Monitor</a>
         </div>
 
         <a href="index.html" class="nav-link logout" onclick="localStorage.clear()">Terminate Session</a>
@@ -411,52 +411,126 @@
 
       <!-- ========== PATIENT CHECKUP (DOCTOR) ========== -->
       <section id="manage-patients" class="content-section hidden">
-        <div class="split-viewport">
-          <div class="analysis-panel" id="sideA">
-            <div class="panel-search">
-              <input type="text" id="inputA" placeholder="SEARCH_PATIENT_A..." onkeyup="liveSearch('A')" />
+        <div class="doc-checkup-layout">
+
+          <!-- LEFT: Patient List -->
+          <div class="doc-patient-sidebar" id="docPatientSidebar">
+            <div class="doc-sidebar-header">
+              <span class="label-heading">Registered Patients</span>
+              <h4>Select a patient to view profile</h4>
             </div>
-            <div id="listA" class="scrollable-registry"></div>
-            <div id="dataA" class="panel-details hidden">
-              <h4 id="nameA" class="patient-title">Patient A</h4>
-              <div class="clinical-metric-grid">
-                <div class="graph-shell"><label>Temperature Trend</label><canvas id="chartA_temp"></canvas></div>
-                <div class="graph-shell"><label>Blood Pressure</label><canvas id="chartA_bp"></canvas></div>
-                <div class="graph-shell"><label>Heart Rate</label><canvas id="chartA_hr"></canvas></div>
-                <div class="graph-shell"><label>Symptoms Count</label><canvas id="chartA_symptoms"></canvas></div>
-              </div>
-              <div class="clinical-history-vault">
-                <label class="label-heading">Current Meds & Food (History)</label>
-                <div id="historyA" class="history-scroll"></div>
-              </div>
-              <div class="instruction-terminal">
-                <textarea id="msgA" placeholder="Send message to patient..."></textarea>
-                <button class="btn-send" onclick="sendAdvice('A')">Send Message</button>
-              </div>
+            <div class="doc-patient-search">
+              <input type="text" id="docPatientSearch" placeholder="Search by name or ID…"
+                    oninput="filterDocPatients()" />
+            </div>
+            <div id="docPatientList" class="doc-patient-list">
+              <p class="doc-list-empty">Loading patients…</p>
             </div>
           </div>
 
-          <div class="analysis-panel" id="sideB">
-            <div class="panel-search">
-              <input type="text" id="inputB" placeholder="SEARCH_PATIENT_B..." onkeyup="liveSearch('B')" />
+          <!-- RIGHT: Patient Profile (hidden until patient selected) -->
+          <div class="doc-profile-area" id="docProfileArea">
+
+            <!-- Empty state -->
+            <div class="doc-profile-empty" id="docProfileEmpty">
+              <div class="doc-empty-icon">🫀</div>
+              <h3>No Patient Selected</h3>
+              <p>Choose a patient from the list on the left to view their full health profile.</p>
             </div>
-            <div id="listB" class="scrollable-registry"></div>
-            <div id="dataB" class="panel-details hidden">
-              <h4 id="nameB" class="patient-title">Patient B</h4>
-              <div class="clinical-metric-grid">
-                <div class="graph-shell"><label>Temperature Trend</label><canvas id="chartB_temp"></canvas></div>
-                <div class="graph-shell"><label>Blood Pressure</label><canvas id="chartB_bp"></canvas></div>
-                <div class="graph-shell"><label>Heart Rate</label><canvas id="chartB_hr"></canvas></div>
-                <div class="graph-shell"><label>Symptoms Count</label><canvas id="chartB_symptoms"></canvas></div>
+
+            <!-- Patient profile (shown after selection) -->
+            <div class="doc-profile-content hidden" id="docProfileContent">
+
+              <!-- Patient header -->
+              <div class="doc-profile-header">
+                <div class="doc-profile-avatar" id="docProfileAvatar">P</div>
+                <div class="doc-profile-info">
+                  <h2 id="docProfileName">Patient Name</h2>
+                  <p id="docProfileId">ID: ----</p>
+                  <div class="doc-profile-tags" id="docProfileTags"></div>
+                </div>
+                <button class="btn-send" onclick="sendAdviceFromProfile()">Send Message</button>
               </div>
-              <div class="clinical-history-vault">
-                <label class="label-heading">Current Meds & Food (History)</label>
-                <div id="historyB" class="history-scroll"></div>
+
+              <!-- Profile tabs -->
+              <div class="doc-profile-tabs">
+                <button class="doc-ptab active" onclick="showDocTab('vitals', this)">Vitals & History</button>
+                <button class="doc-ptab" onclick="showDocTab('ecg', this)">ECG Monitor</button>
+                <button class="doc-ptab" onclick="showDocTab('message', this)">Message</button>
               </div>
-              <div class="instruction-terminal">
-                <textarea id="msgB" placeholder="Send message to patient..."></textarea>
-                <button class="btn-send" onclick="sendAdvice('B')">Send Message</button>
+
+              <!-- TAB: Vitals & History -->
+              <div class="doc-ptab-content" id="doc-tab-vitals">
+                <div class="clinical-metric-grid">
+                  <div class="graph-shell"><label>Temperature Trend</label><canvas id="docChart_temp"></canvas></div>
+                  <div class="graph-shell"><label>Blood Pressure</label><canvas id="docChart_bp"></canvas></div>
+                  <div class="graph-shell"><label>Heart Rate</label><canvas id="docChart_hr"></canvas></div>
+                  <div class="graph-shell"><label>Symptoms Count</label><canvas id="docChart_symptoms"></canvas></div>
+                </div>
+                <div class="clinical-history-vault" style="margin-top:1rem">
+                  <label class="label-heading">Medication & Food History</label>
+                  <div id="docProfileHistory" class="history-scroll"></div>
+                </div>
               </div>
+
+              <!-- TAB: ECG Monitor -->
+              <div class="doc-ptab-content hidden" id="doc-tab-ecg">
+
+                <!-- Heart Rate Trend -->
+                <div class="chart-shell" style="margin-bottom:1rem">
+                  <div class="shell-header">
+                    <span class="label-heading">Heart Rate Trend</span>
+                    <h4>Based on ECG session history</h4>
+                  </div>
+                  <div class="canvas-wrapper">
+                    <canvas id="docEcgHRChart"></canvas>
+                  </div>
+                </div>
+
+                <!-- ECG Session History -->
+                <div class="chart-shell" style="margin-bottom:1rem">
+                  <div class="shell-header">
+                    <span class="label-heading">ECG Session History</span>
+                    <h4>Past analyses — most recent first</h4>
+                  </div>
+                  <div id="docEcgHistoryList" class="ecg-history-list">
+                    <p style="color:#64748B;font-size:.875rem;">Select a patient to load ECG history.</p>
+                  </div>
+                </div>
+
+                <!-- Anomaly Log from last session -->
+                <div class="chart-shell">
+                  <div class="shell-header">
+                    <span class="label-heading">Last Session — Anomaly Log</span>
+                    <h4>Segment-by-segment predictions from most recent ECG</h4>
+                  </div>
+                  <div class="ecg-table-wrap">
+                    <table class="ecg-seg-table">
+                      <thead>
+                        <tr>
+                          <th>#</th><th>Start</th><th>End</th>
+                          <th>Prediction</th><th>Confidence</th><th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="docAnomalyTableBody"></tbody>
+                    </table>
+                  </div>
+                  <div class="ecg-verdict-bar" id="docVerdictBar" style="margin-top:.75rem"></div>
+                </div>
+
+              </div>
+
+              <!-- TAB: Message -->
+              <div class="doc-ptab-content hidden" id="doc-tab-message">
+                <div class="instruction-terminal" style="margin-top:0">
+                  <label class="label-heading">Send Clinical Message</label>
+                  <textarea id="docProfileMsg" rows="5"
+                    placeholder="Write your clinical instructions, medication notes, or advice here…"></textarea>
+                  <button class="btn-send" style="margin-top:.75rem"
+                    onclick="sendAdviceFromProfile()">Send Message</button>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
